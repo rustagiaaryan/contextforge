@@ -1,15 +1,28 @@
 # Demo
 
-The final reproducible demo will index a checked-in Python fixture repository, compile evidence for a cross-file routing bug, and open a local dashboard showing routing, anchors, graph expansion, candidate decisions, Git memory, tests, timings, and budget use.
+The reproducible demo indexes the checked-in Python fixture, compiles evidence for a cross-file routing bug, and opens the local Repository Observatory. The dashboard consumes the same `EvidencePackage` and SQLite graph as the Python, CLI, and MCP interfaces; it contains no mock retrieval data.
 
-Planned command sequence:
+## Run the demo
 
 ```bash
 uv sync --extra dev
-uv run contextforge index examples/demo_repo
-uv run contextforge compile examples/demo_repo --task-file examples/demo_issue.md --token-budget 4000
-uv run contextforge dashboard examples/demo_repo --open
+uv run contextforge index tests/fixtures/sample_repo
+uv run contextforge compile tests/fixtures/sample_repo \
+  --task "Requests through mounted applications lose their route prefix." \
+  --token-budget 1600 --format markdown
+uv run contextforge dashboard tests/fixtures/sample_repo --open
 ```
 
-This guide will be replaced with verified output and a screenshot once the real engine and dashboard are complete.
+Open `http://127.0.0.1:8765` if the browser does not open automatically. Submit the prefilled task to inspect:
 
+- the adaptive source route and bounded evolved concepts;
+- initial anchors and selected nodes on the real knowledge graph;
+- every reranked candidate with its selection or rejection reason;
+- strict token allocation and the final source ranges;
+- deliberately selected regression tests, gated Git memory, and measured stage latency.
+
+## Verified smoke output
+
+The dashboard smoke check on the included task returned 9 selected items from 13 considered candidates, used 1,539 of 1,600 estimated tokens, classified the task as `cross_file_bug`, and overlaid all 9 selected nodes on the graph. Values vary slightly when repository Git history changes; no value is hard-coded in the interface.
+
+The API backing the visual can also be inspected at `/api/docs`, `/api/status`, `/api/compile`, and `/api/graph`.

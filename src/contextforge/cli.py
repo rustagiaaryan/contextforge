@@ -173,6 +173,25 @@ def evaluate_repository_context(
         typer.echo(rendered)
 
 
+@app.command("dashboard")
+def serve_dashboard(
+    repository: Annotated[Path, typer.Argument(help="Indexed local repository.")],
+    host: Annotated[str, typer.Option("--host")] = "127.0.0.1",
+    port: Annotated[int, typer.Option("--port", min=1, max=65_535)] = 8765,
+    open_browser: Annotated[bool, typer.Option("--open")] = False,
+) -> None:
+    """Run the real-output repository observatory on a local HTTP endpoint."""
+    import webbrowser
+
+    import uvicorn
+
+    from contextforge.dashboard import create_dashboard
+
+    if open_browser:
+        webbrowser.open(f"http://{host}:{port}")
+    uvicorn.run(create_dashboard(repository), host=host, port=port, log_level="warning")
+
+
 def _read_task(task: str | None, task_file: Path | None) -> str:
     if bool(task) == bool(task_file):
         raise typer.BadParameter("Provide exactly one of --task or --task-file")

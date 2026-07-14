@@ -65,8 +65,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 11 — dashboard and demo
 
-- [ ] Real-output dashboard with retrieval trace and graph
-- [ ] Reproducible demonstration and screenshot
+- [x] Real-output dashboard with retrieval trace and graph
+- [x] Reproducible local demonstration
 
 ## Phase 12 — hardening and release
 

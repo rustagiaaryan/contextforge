@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>ContextForge — Repository Observatory</title>
+    <meta
+      name="description"
+      content="Inspect how ContextForge routes, retrieves, ranks, and budgets repository evidence."
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/dashboard.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="ContextForge dashboard home">
+        <span class="brand-mark" aria-hidden="true">CF</span>
+        <span>
+          <strong>ContextForge</strong>
+          <small>Repository Observatory</small>
+        </span>
+      </a>
+      <div class="status-cluster" aria-live="polite">
+        <span class="pulse"></span>
+        <span id="repo-name">Connecting to index</span>
+        <span class="status-count" id="index-count">—</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow"><span>Adaptive context compiler</span><i></i><span>Local-first</span></div>
+        <h1>See why each line<br /><em>earned its context.</em></h1>
+        <p>
+          Submit a software task. ContextForge reveals the route from repository search to
+          bounded graph expansion, historical memory, and the final token-budgeted evidence.
+        </p>
+      </section>
+
+      <section class="compiler-card" aria-labelledby="compiler-title">
+        <div class="card-index">01 / COMPILE</div>
+        <form id="compile-form">
+          <label id="compiler-title" for="task">Software task or issue</label>
+          <textarea id="task" name="task" rows="3">Requests through mounted applications lose their route prefix.</textarea>
+          <div class="form-footer">
+            <label class="budget-control" for="budget">
+              <span>Token budget</span>
+              <output id="budget-output" for="budget">4,000</output>
+              <input id="budget" name="budget" type="range" min="512" max="12000" step="128" value="4000" />
+            </label>
+            <button type="submit" id="compile-button">
+              <span>Compile evidence</span><span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section id="results" class="results is-hidden" aria-live="polite">
+        <div class="metric-grid" id="metrics"></div>
+
+        <div class="dashboard-grid">
+          <article class="panel route-panel">
+            <div class="panel-head"><span>02 / ROUTE</span><span id="route-type" class="tag"></span></div>
+            <h2>Retrieval decision</h2>
+            <p id="route-reason"></p>
+            <div id="route-sources" class="chips"></div>
+            <div class="evolution-line"><span>Query evolution</span><strong id="evolution"></strong></div>
+          </article>
+
+          <article class="panel budget-panel">
+            <div class="panel-head"><span>03 / BUDGET</span><span id="budget-percent" class="tag"></span></div>
+            <h2>Context allocation</h2>
+            <div class="budget-ring" id="budget-ring">
+              <div><strong id="tokens-used">0</strong><span>tokens used</span></div>
+            </div>
+            <div class="budget-legend"><span><i class="selected-dot"></i>Selected</span><span><i></i>Available</span></div>
+          </article>
+
+          <article class="panel graph-panel">
+            <div class="panel-head"><span>04 / STRUCTURE</span><span class="tag" id="graph-count">—</span></div>
+            <div class="panel-title-row">
+              <div><h2>Evidence graph</h2><p>Search anchors guide a bounded structural neighborhood.</p></div>
+              <div class="graph-key"><span><i class="anchor-key"></i>Anchor</span><span><i class="selected-key"></i>Selected</span></div>
+            </div>
+            <canvas id="graph-canvas" aria-label="Repository evidence graph"></canvas>
+            <div id="graph-tooltip" role="status"></div>
+          </article>
+
+          <article class="panel candidates-panel">
+            <div class="panel-head"><span>05 / RANK</span><span class="tag" id="candidate-count">—</span></div>
+            <div class="panel-title-row"><div><h2>Candidate audit</h2><p>Every acceptance and rejection remains inspectable.</p></div></div>
+            <div class="candidate-tabs" role="tablist">
+              <button class="active" type="button" data-filter="all">All</button>
+              <button type="button" data-filter="selected">Selected</button>
+              <button type="button" data-filter="rejected">Rejected</button>
+            </div>
+            <div id="candidate-list" class="candidate-list"></div>
+          </article>
+        </div>
+
+        <section class="evidence-section">
+          <div class="section-heading">
+            <div><span>06 / PACKAGE</span><h2>Compiled evidence</h2></div>
+            <p>Implementation and validation ranges, ready for an autonomous coding agent.</p>
+          </div>
+          <div id="evidence-list" class="evidence-list"></div>
+        </section>
+
+        <section class="trace-grid">
+          <article class="panel">
+            <div class="panel-head"><span>07 / GIT MEMORY</span><span class="tag" id="commit-count">0</span></div>
+            <h2>Relevant history</h2>
+            <div id="commit-list" class="empty-state">No historical patch passed the confidence gate.</div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><span>08 / LATENCY</span><span class="tag" id="total-latency">—</span></div>
+            <h2>Stage timings</h2>
+            <div id="timing-list" class="timing-list"></div>
+          </article>
+        </section>
+      </section>
+
+      <section id="empty-state" class="empty-dashboard">
+        <span>Ready to forge</span>
+        <p>The repository index is warm. Compile the task above to reveal its evidence path.</p>
+      </section>
+    </main>
+
+    <footer><span>ContextForge / deterministic local baseline</span><span>Repository code is parsed, never executed.</span></footer>
+  </body>
+</html>
+
