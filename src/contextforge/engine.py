@@ -51,6 +51,23 @@ class IndexReport(BaseModel):
     elapsed_ms: float = Field(ge=0.0)
 
 
+class IndexStatus(BaseModel):
+    """Current persistent index status for CLI and MCP clients."""
+
+    model_config = ConfigDict(frozen=True)
+
+    repository: str
+    database_path: str
+    indexed: bool
+    files: int
+    units: int
+    graph_nodes: int
+    graph_edges: int
+    embeddings: int
+    commits: int
+    parse_errors: tuple[str, ...] = ()
+
+
 class ContextForge:
     """Index a repository and compile task-specific evidence under a hard budget."""
 
@@ -275,6 +292,62 @@ class ContextForge:
         )
         self._enforce_render_budget(package)
         return package
+
+    def get_index_status(self) -> IndexStatus:
+        """Inspect the repository-local index without mutating repository source."""
+        self.database.initialize()
+        with self.database.connection() as connection:
+            files = int(connection.execute("SELECT COUNT(*) FROM files").fetchone()[0])
+            units = int(connection.execute("SELECT COUNT(*) FROM units").fetchone()[0])
+            graph_nodes = int(connection.execute("SELECT COUNT(*) FROM graph_nodes").fetchone()[0])
+            graph_edges = int(connection.execute("SELECT COUNT(*) FROM graph_edges").fetchone()[0])
+            embeddings = int(connection.execute("SELECT COUNT(*) FROM embeddings").fetchone()[0])
+            commits = int(connection.execute("SELECT COUNT(*) FROM commits").fetchone()[0])
+            errors = tuple(
+                f"{row['path']}: {row['parse_error']}"
+                for row in connection.execute(
+                    "SELECT path, parse_error FROM files "
+                    "WHERE parse_error IS NOT NULL ORDER BY path"
+                )
+            )
+        return IndexStatus(
+            repository=str(self.repository),
+            database_path=str(self.database.path),
+            indexed=files > 0,
+            files=files,
+            units=units,
+            graph_nodes=graph_nodes,
+            graph_edges=graph_edges,
+            embeddings=embeddings,
+            commits=commits,
+            parse_errors=errors,
+        )
+
+    def search_code(self, query: str, *, limit: int = 20) -> list[Candidate]:
+        """Run hybrid lexical/semantic code search with unified ranking."""
+        self._ensure_index()
+        route = AdaptiveRouter().route(query)
+        groups = [LexicalRetriever(self.database).search(query, limit=max(limit * 2, 20))]
+        if self.embedding_provider:
+            groups.append(
+                SemanticRetriever(self.database, self.embedding_provider).search(
+                    query, limit=max(limit * 2, 20)
+                )
+            )
+        candidates = merge_candidates(groups)
+        return WeightedReranker().rerank(candidates, task=query, route=route)[:limit]
+
+    def search_symbols(self, query: str, *, limit: int = 20) -> list[Candidate]:
+        """Search exact and fuzzy symbol names with explanations."""
+        self._ensure_index()
+        route = AdaptiveRouter().route(query)
+        candidates = SymbolRetriever(self.database).search(query, limit=limit * 2)
+        return WeightedReranker().rerank(candidates, task=query, route=route)[:limit]
+
+    def _ensure_index(self) -> None:
+        self.database.initialize()
+        if not self.database.list_units(node_types=(NodeType.FILE,)):
+            self.index()
 
     @staticmethod
     def _timing(stage: str, started: float, item_count: int) -> StageTiming:

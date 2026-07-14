@@ -56,7 +56,7 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 9 — interfaces
 
-- [ ] Python API and polished CLI
+- [x] Python API and polished CLI
 - [ ] Typed MCP tools and sample configuration
 
 ## Phase 10 — evaluation
