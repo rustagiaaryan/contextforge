@@ -14,7 +14,7 @@ runner = CliRunner()
 
 def _repository(tmp_path: Path) -> Path:
     repository = tmp_path / "repository"
-    shutil.copytree(FIXTURE, repository)
+    shutil.copytree(FIXTURE, repository, ignore=shutil.ignore_patterns(".contextforge"))
     return repository
 
 

@@ -12,7 +12,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "sample_repo"
 
 def _engine(tmp_path: Path) -> ContextForge:
     repository = tmp_path / "repository"
-    shutil.copytree(FIXTURE, repository)
+    shutil.copytree(FIXTURE, repository, ignore=shutil.ignore_patterns(".contextforge"))
     return ContextForge.open(repository)
 
 

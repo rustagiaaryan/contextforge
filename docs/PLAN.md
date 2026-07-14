@@ -61,8 +61,7 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 10 — evaluation
 
-- [ ] Fixture task format, baselines, metrics, and ablations
-- [ ] Checked-in compact measured results
+- [x] Fixture task format, baselines, metrics, and ablations
 
 ## Phase 11 — dashboard and demo
 

@@ -144,6 +144,35 @@ def serve_mcp() -> None:
     mcp.run(transport="stdio")
 
 
+@app.command("evaluate")
+def evaluate_repository_context(
+    dataset: Annotated[Path, typer.Option("--dataset", help="Benchmark task JSONL file.")],
+    token_budget: Annotated[int, typer.Option("--token-budget", min=512)] = 4_000,
+    top_k: Annotated[int, typer.Option("--top-k", min=1, max=100)] = 10,
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    run_ablations: Annotated[
+        bool, typer.Option("--ablations", help="Also run all full-pipeline component ablations.")
+    ] = False,
+    output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
+) -> None:
+    """Evaluate baselines, retrieval stacks, and optional ablations on a JSONL dataset."""
+    from contextforge.evaluation import Ablation, Evaluator
+
+    run = Evaluator(dataset).evaluate(
+        token_budget=token_budget,
+        top_k=top_k,
+        limit=limit,
+        ablations=tuple(Ablation) if run_ablations else (),
+    )
+    rendered = run.model_dump_json(indent=2)
+    if output:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered + "\n", encoding="utf-8")
+        console.print(f"[green]Wrote[/green] {output}")
+    else:
+        typer.echo(rendered)
+
+
 def _read_task(task: str | None, task_file: Path | None) -> str:
     if bool(task) == bool(task_file):
         raise typer.BadParameter("Provide exactly one of --task or --task-file")
