@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from collections import deque
+from collections import defaultdict, deque
 
 from contextforge.graph.models import GraphEdge, GraphNeighbor, GraphNode
 from contextforge.models import EdgeType, NodeType
@@ -16,28 +16,21 @@ class GraphQuery:
 
     def __init__(self, database: Database) -> None:
         self.database = database
+        self._nodes: dict[str, GraphNode] | None = None
+        self._incoming: dict[str, tuple[GraphEdge, ...]] | None = None
+        self._outgoing: dict[str, tuple[GraphEdge, ...]] | None = None
 
     def get_node(self, node_id: str) -> GraphNode | None:
         """Return a graph node by identifier."""
-        with self.database.connection() as connection:
-            row = connection.execute(
-                "SELECT * FROM graph_nodes WHERE node_id = ?", (node_id,)
-            ).fetchone()
-        return self._node(row) if row else None
+        self._load_cache()
+        assert self._nodes is not None
+        return self._nodes.get(node_id)
 
     def edges(self, node_id: str) -> tuple[tuple[GraphEdge, ...], tuple[GraphEdge, ...]]:
         """Return `(incoming, outgoing)` edges for a node."""
-        with self.database.connection() as connection:
-            incoming = connection.execute(
-                "SELECT * FROM graph_edges WHERE target_id = ? ORDER BY source_id", (node_id,)
-            ).fetchall()
-            outgoing = connection.execute(
-                "SELECT * FROM graph_edges WHERE source_id = ? ORDER BY target_id", (node_id,)
-            ).fetchall()
-        return (
-            tuple(self._edge(row) for row in incoming),
-            tuple(self._edge(row) for row in outgoing),
-        )
+        self._load_cache()
+        assert self._incoming is not None and self._outgoing is not None
+        return self._incoming.get(node_id, ()), self._outgoing.get(node_id, ())
 
     def callers(self, node_id: str) -> tuple[GraphNode, ...]:
         """Return local symbols with resolved `CALLS` edges into a node."""
@@ -110,6 +103,29 @@ class GraphQuery:
         with self.database.connection() as connection:
             rows = connection.execute(query, (node_id, edge_type.value)).fetchall()
         return tuple(self._node(row) for row in rows)
+
+    def _load_cache(self) -> None:
+        if self._nodes is not None:
+            return
+        with self.database.connection() as connection:
+            node_rows = connection.execute("SELECT * FROM graph_nodes").fetchall()
+            edge_rows = connection.execute("SELECT * FROM graph_edges").fetchall()
+        nodes = {str(row["node_id"]): self._node(row) for row in node_rows}
+        incoming: dict[str, list[GraphEdge]] = defaultdict(list)
+        outgoing: dict[str, list[GraphEdge]] = defaultdict(list)
+        for row in edge_rows:
+            edge = self._edge(row)
+            incoming[edge.target_id].append(edge)
+            outgoing[edge.source_id].append(edge)
+        self._nodes = nodes
+        self._incoming = {
+            node_id: tuple(sorted(edges, key=lambda edge: (-edge.confidence, edge.source_id)))
+            for node_id, edges in incoming.items()
+        }
+        self._outgoing = {
+            node_id: tuple(sorted(edges, key=lambda edge: (-edge.confidence, edge.target_id)))
+            for node_id, edges in outgoing.items()
+        }
 
     @staticmethod
     def _node(row: sqlite3.Row) -> GraphNode:

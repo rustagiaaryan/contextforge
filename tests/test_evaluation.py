@@ -55,6 +55,8 @@ def test_evaluator_runs_required_configs_and_an_ablation() -> None:
 
     assert len(run.results) == 4
     assert len(run.aggregates) == 4
+    assert len(run.index_measurements) == 1
+    assert run.index_measurements[0].incremental_files_reparsed == 0
     assert run.dataset_sha256
     assert all(result.metrics.retrieval_latency_ms > 0 for result in run.results)
     assert any(result.ablation is Ablation.GRAPH for result in run.results)

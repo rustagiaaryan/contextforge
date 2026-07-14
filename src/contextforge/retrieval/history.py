@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from contextforge.embeddings import EmbeddingProvider
 from contextforge.models import EdgeType, NodeType
-from contextforge.retrieval.text import fts_query
+from contextforge.retrieval.text import fts_query, query_terms
 from contextforge.storage import Database
 
 FileChange = tuple[str, int, int, str, str | None]
@@ -364,6 +364,7 @@ class GitHistoryRetriever:
             files_by_commit.setdefault(str(row["commit_hash"]), []).append(str(row["path"]))
         current_paths = set(self.database.file_records())
         now = datetime.now(UTC)
+        task_terms = set(query_terms(task))
         results: list[CommitEvidence] = []
         for row in commits:
             commit_hash = str(row["commit_hash"])
@@ -377,6 +378,7 @@ class GitHistoryRetriever:
             current_fraction = sum(path in current_paths for path in changed) / max(1, len(changed))
             lexical_score = lexical.get(commit_hash, 0.0)
             semantic_score = semantic.get(commit_hash, 0.0)
+            message_overlap = task_terms.intersection(query_terms(str(row["message"])))
             anchor_score = min(1.0, len(overlap) / max(1, len(anchor_paths)))
             score = min(
                 1.0,
@@ -386,12 +388,16 @@ class GitHistoryRetriever:
                 + recency * 0.05
                 + current_fraction * 0.05,
             )
-            strong_signal = lexical_score >= 0.15 or semantic_score >= 0.25 or bool(overlap)
+            # File overlap alone is not evidence that an old patch addresses the task.
+            # Require task language in the commit message or unusually strong semantics.
+            strong_signal = bool(message_overlap) or (semantic_score >= 0.45 and bool(overlap))
             if score < minimum_score or not strong_signal:
                 continue
             reasons: list[str] = []
             if lexical_score:
                 reasons.append(f"history keyword relevance {lexical_score:.2f}")
+            if message_overlap:
+                reasons.append("commit message overlaps " + ", ".join(sorted(message_overlap)[:5]))
             if semantic_score:
                 reasons.append(f"history semantic relevance {semantic_score:.2f}")
             if overlap:

@@ -64,6 +64,7 @@ def test_git_memory_indexes_searches_and_gates_history(tmp_path: Path) -> None:
     assert results[0].message == "fix: preserve mounted route prefix"
     assert "router.py" in results[0].anchor_overlap
     assert all(result.score >= 0.25 for result in results)
+    assert all(result.message != "chore: add release metadata" for result in results)
 
 
 def test_git_memory_exposes_cochanges_and_hotspots(tmp_path: Path) -> None:

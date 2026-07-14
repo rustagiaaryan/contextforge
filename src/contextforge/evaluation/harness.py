@@ -17,6 +17,7 @@ from contextforge.evaluation.models import (
     EvaluationConfig,
     EvaluationItem,
     EvaluationRun,
+    IndexMeasurement,
     TaskEvaluation,
     TaskSpec,
 )
@@ -60,12 +61,36 @@ class Evaluator:
         tasks = self.tasks[:limit] if limit else self.tasks
         results: list[TaskEvaluation] = []
         engines: dict[Path, ContextForge] = {}
+        index_measurements: list[IndexMeasurement] = []
         for task in tasks:
             repository = (self.dataset.parent / task.repository).resolve(strict=True)
             engine = engines.get(repository)
             if engine is None:
                 engine = ContextForge.open(repository)
-                engine.index()
+                tracemalloc.start()
+                tracemalloc.reset_peak()
+                started = time.perf_counter()
+                report = engine.index()
+                clean_latency = (time.perf_counter() - started) * 1000
+                _, clean_peak = tracemalloc.get_traced_memory()
+                tracemalloc.stop()
+                started = time.perf_counter()
+                incremental = engine.index()
+                incremental_latency = (time.perf_counter() - started) * 1000
+                index_measurements.append(
+                    IndexMeasurement(
+                        repository=Path(task.repository).name,
+                        files=report.source.discovered_files,
+                        source_units=len(engine.database.list_units()),
+                        clean_index_latency_ms=clean_latency,
+                        clean_peak_memory_mb=clean_peak / 1_048_576,
+                        incremental_index_latency_ms=incremental_latency,
+                        incremental_files_reparsed=incremental.source.parsed_files,
+                        graph_nodes=report.graph_nodes,
+                        graph_edges=report.graph_edges,
+                        commits=report.commits_indexed,
+                    )
+                )
                 engines[repository] = engine
             for configuration in configurations:
                 results.append(
@@ -113,6 +138,7 @@ class Evaluator:
             platform=platform.platform(),
             top_k=top_k,
             token_budget=token_budget,
+            index_measurements=tuple(index_measurements),
             results=tuple(results),
             aggregates=tuple(aggregates),
         )

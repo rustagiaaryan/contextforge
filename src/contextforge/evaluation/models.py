@@ -117,6 +117,23 @@ class AggregateResult(BaseModel):
     metrics: Metrics
 
 
+class IndexMeasurement(BaseModel):
+    """Measured clean/incremental repository indexing performance."""
+
+    model_config = ConfigDict(frozen=True)
+
+    repository: str
+    files: int
+    source_units: int
+    clean_index_latency_ms: float
+    clean_peak_memory_mb: float
+    incremental_index_latency_ms: float
+    incremental_files_reparsed: int
+    graph_nodes: int
+    graph_edges: int
+    commits: int
+
+
 class EvaluationRun(BaseModel):
     """Reproducible benchmark run with task-level and aggregate results."""
 
@@ -129,5 +146,6 @@ class EvaluationRun(BaseModel):
     platform: str
     top_k: int
     token_budget: int
+    index_measurements: tuple[IndexMeasurement, ...]
     results: tuple[TaskEvaluation, ...]
     aggregates: tuple[AggregateResult, ...]
