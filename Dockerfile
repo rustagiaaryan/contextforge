@@ -9,6 +9,9 @@ COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src ./src
 RUN uv sync --frozen --no-dev
 
+RUN useradd --create-home --uid 10001 contextforge \
+    && chown -R contextforge:contextforge /app
+USER contextforge
+
 ENTRYPOINT ["uv", "run", "--no-sync", "contextforge"]
 CMD ["--help"]
-

@@ -26,3 +26,15 @@ jobs:
       - run: uv run mypy src
       - run: uv run pytest --cov=contextforge --cov-report=term-missing
 
+  security-and-container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.11"
+          enable-cache: true
+      - run: uv sync --extra dev --frozen
+      - run: uvx pip-audit --path .venv/lib/python3.11/site-packages
+      - run: docker build -t contextforge:ci .
+      - run: docker run --rm contextforge:ci --version
