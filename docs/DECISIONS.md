@@ -36,3 +36,14 @@
 
 **Why:** Whole symbols are more actionable than arbitrary token fragments, and strict accounting makes budget behavior testable.
 
+## ADR-007: Git memory needs a semantic gate, not only file overlap
+
+**Decision:** A historical commit must share task language in its message or have unusually strong semantic similarity plus an anchor-file overlap. File overlap, recency, or a path keyword alone cannot pass the gate.
+
+**Why:** Old commits frequently touch current hotspots without addressing the current behavior. Loose overlap polluted the fixture benchmark; the stronger gate preserved the controlled regression patch while excluding repository-setup history.
+
+## ADR-008: The dashboard is a read model over evidence packages
+
+**Decision:** The local FastAPI dashboard consumes `EvidencePackage`, index-status, and graph APIs directly. It has no independent retrieval implementation or database schema.
+
+**Why:** A visualization that recomputes or mocks scores can diverge from CLI/MCP behavior. A thin read model makes the interface a debugging instrument for the actual compiler.

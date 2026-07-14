@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "label": "preliminary",
+  "scope": "Three deterministic tasks over the checked-in four-file Python fixture; not a broad external benchmark.",
+  "command": "uv run contextforge evaluate --dataset benchmarks/sample_tasks.jsonl --token-budget 2000 --top-k 3 --ablations",
+  "dataset_sha256": "d9e9462585322bf4c6e1e261d24d2e0408a0a58005009be08850de00b8c3ab10",
+  "run_at": "2026-07-14T22:18:30.287671Z",
+  "python_version": "3.11.12",
+  "platform": "macOS-14.6.1-arm64-arm-64bit",
+  "top_k": 3,
+  "token_budget": 2000,
+  "index_measurements": [
+    {
+      "repository": "sample_repo",
+      "files": 4,
+      "source_units": 14,
+      "clean_index_latency_ms": 151.3209579861723,
+      "clean_peak_memory_mb": 0.2354583740234375,
+      "incremental_index_latency_ms": 52.70470801042393,
+      "incremental_files_reparsed": 0,
+      "graph_nodes": 17,
+      "graph_edges": 31,
+      "commits": 1
+    }
+  ],
+  "aggregates": [
+    {
+      "configuration": "filename_baseline",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.7777777777777777,
+        "file_precision_at_k": 0.5555555555555555,
+        "symbol_recall_at_k": 0.0,
+        "symbol_precision_at_k": 0.0,
+        "mrr": 0.5,
+        "ndcg_at_k": 0.5641241005086481,
+        "gold_line_coverage": 0.6884920634920636,
+        "context_tokens": 245,
+        "tokens_per_relevant_file": 163.33333333333334,
+        "retrieval_latency_ms": 1.4105690061114728,
+        "peak_memory_mb": 0.0164340337117513,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 0.5555555555555555
+      }
+    },
+    {
+      "configuration": "bm25_only",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 294,
+        "tokens_per_relevant_file": 173.88888888888889,
+        "retrieval_latency_ms": 10.177083332867673,
+        "peak_memory_mb": 0.12761751810709634,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 2,
+        "selected_context_relevance": 1.0
+      }
+    },
+    {
+      "configuration": "semantic_only",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.7777777777777777,
+        "file_precision_at_k": 0.5555555555555555,
+        "symbol_recall_at_k": 0.6666666666666666,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.8230929086742522,
+        "gold_line_coverage": 0.7162698412698413,
+        "context_tokens": 285,
+        "tokens_per_relevant_file": 219.7777777777778,
+        "retrieval_latency_ms": 8.988472322622934,
+        "peak_memory_mb": 0.12084039052327473,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 1.0
+      }
+    },
+    {
+      "configuration": "hybrid",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 263,
+        "tokens_per_relevant_file": 158.05555555555557,
+        "retrieval_latency_ms": 27.487250335980207,
+        "peak_memory_mb": 0.19111315409342447,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 3,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "hybrid_graph",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 275,
+        "tokens_per_relevant_file": 166.22222222222223,
+        "retrieval_latency_ms": 81.45379199413583,
+        "peak_memory_mb": 0.3453391393025716,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "hybrid_graph_history",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 275,
+        "tokens_per_relevant_file": 166.22222222222223,
+        "retrieval_latency_ms": 94.31813866831362,
+        "peak_memory_mb": 0.34423351287841797,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": null,
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.4146825396825397,
+        "context_tokens": 261,
+        "tokens_per_relevant_file": 158.33333333333334,
+        "retrieval_latency_ms": 105.00281965748097,
+        "peak_memory_mb": 0.3778378168741862,
+        "graph_expansions": 6,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_semantic",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.583994708994709,
+        "context_tokens": 283,
+        "tokens_per_relevant_file": 176.88888888888889,
+        "retrieval_latency_ms": 101.75662501327072,
+        "peak_memory_mb": 0.3142051696777344,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_graph",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.583994708994709,
+        "context_tokens": 275,
+        "tokens_per_relevant_file": 171.94444444444446,
+        "retrieval_latency_ms": 47.01754200505093,
+        "peak_memory_mb": 0.24749469757080078,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_history",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.583994708994709,
+        "context_tokens": 290,
+        "tokens_per_relevant_file": 181.33333333333334,
+        "retrieval_latency_ms": 94.46933333917211,
+        "peak_memory_mb": 0.34406375885009766,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_test_discovery",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.583994708994709,
+        "context_tokens": 286,
+        "tokens_per_relevant_file": 178.88888888888889,
+        "retrieval_latency_ms": 99.88591633737087,
+        "peak_memory_mb": 0.3441680272420247,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_query_evolution",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 279,
+        "tokens_per_relevant_file": 168.66666666666666,
+        "retrieval_latency_ms": 94.99731933465227,
+        "peak_memory_mb": 0.3441775639851888,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_routing",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.583994708994709,
+        "context_tokens": 290,
+        "tokens_per_relevant_file": 181.33333333333334,
+        "retrieval_latency_ms": 101.13573567165683,
+        "peak_memory_mb": 0.3439118067423503,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.7777777777777777
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_token_optimization",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.8888888888888888,
+        "file_precision_at_k": 0.6666666666666666,
+        "symbol_recall_at_k": 0.611111111111111,
+        "symbol_precision_at_k": 0.4444444444444444,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.9217868789962073,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 340,
+        "tokens_per_relevant_file": 203.61111111111111,
+        "retrieval_latency_ms": 79.76980600506067,
+        "peak_memory_mb": 0.3441425959269206,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.8888888888888888
+      }
+    },
+    {
+      "configuration": "full_adaptive",
+      "ablation": "without_redundancy_penalty",
+      "task_count": 3,
+      "metrics": {
+        "file_recall_at_k": 0.7777777777777777,
+        "file_precision_at_k": 0.5555555555555555,
+        "symbol_recall_at_k": 0.7777777777777777,
+        "symbol_precision_at_k": 0.5555555555555555,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.8435737579924144,
+        "gold_line_coverage": 0.6580687830687831,
+        "context_tokens": 314,
+        "tokens_per_relevant_file": 202.66666666666666,
+        "retrieval_latency_ms": 84.12859730500107,
+        "peak_memory_mb": 0.3520825703938802,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.8888888888888888
+      }
+    }
+  ]
+}

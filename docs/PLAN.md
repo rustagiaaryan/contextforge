@@ -62,6 +62,7 @@ This is a living checklist. A checked box means implementation and proportionate
 ## Phase 10 — evaluation
 
 - [x] Fixture task format, baselines, metrics, and ablations
+- [x] Checked-in compact measured results
 
 ## Phase 11 — dashboard and demo
 
@@ -71,7 +72,7 @@ This is a living checklist. A checked box means implementation and proportionate
 ## Phase 12 — hardening and release
 
 - [ ] Full local and clean-clone validation
-- [ ] Latency and memory measurements
+- [x] Latency and memory measurements
 - [ ] Secret and path audit
 - [ ] Release notes and initial tag
 - [ ] Clean tree and synchronized remote

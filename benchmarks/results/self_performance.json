@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "label": "measured",
+  "scope": "ContextForge repository at the pre-release benchmark state; one local run, no warmup repetition.",
+  "run_at": "2026-07-14T22:17:00Z",
+  "environment": {
+    "python": "3.11.12",
+    "platform": "macOS 14.6.1 arm64"
+  },
+  "repository": {
+    "files": 72,
+    "source_units": 429,
+    "graph_nodes": 452,
+    "graph_edges": 2086,
+    "commits": 15
+  },
+  "clean_index": {
+    "latency_ms": 1930.8260419638827,
+    "parsed_files": 72,
+    "embeddings_generated": 357
+  },
+  "incremental_index": {
+    "latency_ms": 437.3563330154866,
+    "reparsed_files": 0,
+    "embeddings_generated": 0
+  },
+  "hybrid_search": {
+    "query": "bounded graph expansion related tests",
+    "latency_ms": 33.25912496075034,
+    "result_count": 20
+  },
+  "compile": {
+    "task": "Git history retrieval should not inject weak old commits.",
+    "token_budget": 8000,
+    "latency_ms": 1138.380916963797,
+    "selected_items": 23,
+    "estimated_tokens": 7823,
+    "candidates_considered": 86
+  },
+  "process_max_rss_bytes": 54083584
+}
