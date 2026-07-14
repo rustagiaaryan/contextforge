@@ -136,6 +136,14 @@ def compile_repository(
         typer.echo(rendered, nl=False)
 
 
+@app.command("mcp")
+def serve_mcp() -> None:
+    """Run the typed ContextForge MCP server over standard input/output."""
+    from contextforge.mcp import mcp
+
+    mcp.run(transport="stdio")
+
+
 def _read_task(task: str | None, task_file: Path | None) -> str:
     if bool(task) == bool(task_file):
         raise typer.BadParameter("Provide exactly one of --task or --task-file")
