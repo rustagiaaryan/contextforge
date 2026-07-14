@@ -35,8 +35,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 5 — structural retrieval and tests
 
-- [ ] Bounded, edge-aware graph expansion
-- [ ] Multi-signal related-test discovery
+- [x] Bounded, edge-aware graph expansion
+- [x] Multi-signal related-test discovery
 
 ## Phase 6 — Git memory
 

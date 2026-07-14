@@ -18,6 +18,7 @@ class RetrievalSource(StrEnum):
     CALL_GRAPH = "call_graph"
     IMPORT_GRAPH = "import_graph"
     INHERITANCE_GRAPH = "inheritance_graph"
+    GRAPH = "graph_expansion"
     RELATED_TESTS = "related_tests"
     GIT_HISTORY = "git_history"
     HOTSPOT = "hotspot"

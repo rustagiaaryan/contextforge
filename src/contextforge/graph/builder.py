@@ -121,6 +121,33 @@ class GraphBuilder:
                         float(hint["confidence"]) * resolution_confidence,
                         {"line": hint["line"], "unresolved_target": target},
                     )
+            # A resolved reference or call from a test is strong evidence that the test
+            # validates the target. Keep the original edge and add an explicit TESTS edge.
+            test_links = connection.execute(
+                """
+                SELECT e.source_id, e.target_id, e.confidence, e.metadata_json
+                FROM graph_edges e
+                JOIN graph_nodes source ON source.node_id = e.source_id
+                JOIN graph_nodes target ON target.node_id = e.target_id
+                WHERE source.node_type = ? AND target.node_type != ?
+                  AND e.edge_type IN (?, ?)
+                """,
+                (
+                    NodeType.TEST.value,
+                    NodeType.TEST.value,
+                    EdgeType.CALLS.value,
+                    EdgeType.REFERENCES.value,
+                ),
+            ).fetchall()
+            for link in test_links:
+                self._insert_edge(
+                    connection,
+                    str(link["source_id"]),
+                    str(link["target_id"]),
+                    EdgeType.TESTS,
+                    float(link["confidence"]) * 0.9,
+                    json.loads(str(link["metadata_json"])),
+                )
             node_count = int(connection.execute("SELECT COUNT(*) FROM graph_nodes").fetchone()[0])
             edge_count = int(connection.execute("SELECT COUNT(*) FROM graph_edges").fetchone()[0])
         return node_count, edge_count
