@@ -1,5 +1,6 @@
 """Candidate retrieval sources."""
 
+from contextforge.retrieval.evolution import QueryEvolution, QueryEvolutionTrace
 from contextforge.retrieval.history import GitHistoryIndexer, GitHistoryRetriever
 from contextforge.retrieval.lexical import LexicalRetriever
 from contextforge.retrieval.models import Candidate, RetrievalSource
@@ -13,6 +14,8 @@ __all__ = [
     "GitHistoryIndexer",
     "GitHistoryRetriever",
     "LexicalRetriever",
+    "QueryEvolution",
+    "QueryEvolutionTrace",
     "RelatedTestRetriever",
     "RetrievalSource",
     "SemanticIndexer",

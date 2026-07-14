@@ -45,9 +45,9 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 7 — routing, reranking, and query evolution
 
-- [ ] Explainable adaptive router
-- [ ] Unified deterministic reranker
-- [ ] One bounded query-evolution pass with trace
+- [x] Explainable adaptive router
+- [x] Unified deterministic reranker
+- [x] One bounded query-evolution pass with trace
 
 ## Phase 8 — context optimization
 
