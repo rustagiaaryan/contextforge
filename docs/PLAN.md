@@ -7,13 +7,13 @@ This is a living checklist. A checked box means implementation and proportionate
 - [x] Audit workspace and GitHub availability
 - [x] Establish architecture, decisions, evaluation, demo, and security documents
 - [x] Configure package, lint, type checking, tests, CI, Docker, and ignore rules
-- [ ] Publish initial Git milestone
+- [x] Publish initial Git milestone
 
 ## Phase 1 — parser and persistent index
 
-- [ ] Ignore-aware traversal and Python AST extraction
-- [ ] SQLite schema and content-hash incremental reindexing
-- [ ] Parser and incremental-index tests
+- [x] Ignore-aware traversal and Python AST extraction
+- [x] SQLite schema and content-hash incremental reindexing
+- [x] Parser and incremental-index tests
 
 ## Phase 2 — knowledge graph
 
@@ -76,4 +76,3 @@ This is a living checklist. A checked box means implementation and proportionate
 - [ ] Secret and path audit
 - [ ] Release notes and initial tag
 - [ ] Clean tree and synchronized remote
-
