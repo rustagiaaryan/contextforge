@@ -23,8 +23,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 3 — lexical and symbol retrieval
 
-- [ ] FTS/BM25 search across paths, symbols, docs, comments, and code
-- [ ] Exact and fuzzy symbol search with provenance
+- [x] FTS/BM25 search across paths, symbols, docs, comments, and code
+- [x] Exact and fuzzy symbol search with provenance
 - [ ] Retrieval latency benchmark
 
 ## Phase 4 — semantic retrieval
