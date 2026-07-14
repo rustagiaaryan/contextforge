@@ -51,8 +51,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 8 — context optimization
 
-- [ ] Strict token estimator and diversity-aware selection
-- [ ] JSON and Markdown evidence packages
+- [x] Strict token estimator and diversity-aware selection
+- [x] JSON and Markdown evidence packages
 
 ## Phase 9 — interfaces
 
