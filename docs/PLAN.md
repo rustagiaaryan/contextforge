@@ -29,9 +29,9 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 4 — semantic retrieval
 
-- [ ] Pluggable embedding provider and deterministic local default
-- [ ] Batched, content-addressed cache and cosine search
-- [ ] Graceful provider failure
+- [x] Pluggable embedding provider and deterministic local default
+- [x] Batched, content-addressed cache and cosine search
+- [x] Graceful provider failure
 
 ## Phase 5 — structural retrieval and tests
 

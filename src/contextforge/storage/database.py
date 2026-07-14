@@ -201,7 +201,6 @@ class Database:
             ]
             for unit_id in old_ids:
                 connection.execute("DELETE FROM units_fts WHERE unit_id = ?", (unit_id,))
-                connection.execute("DELETE FROM embeddings WHERE unit_id = ?", (unit_id,))
             connection.execute(
                 "DELETE FROM relation_hints WHERE source_id IN "
                 "(SELECT unit_id FROM units WHERE path = ?)",
@@ -210,6 +209,9 @@ class Database:
             connection.execute("DELETE FROM units WHERE path = ?", (parsed.path,))
             for unit in parsed.units:
                 self._insert_unit(connection, unit)
+            new_ids = {unit.unit_id for unit in parsed.units}
+            for removed_id in set(old_ids) - new_ids:
+                connection.execute("DELETE FROM embeddings WHERE unit_id = ?", (removed_id,))
             for relation in parsed.relations:
                 self._insert_hint(connection, relation)
             connection.execute(
