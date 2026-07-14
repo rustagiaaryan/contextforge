@@ -18,3 +18,6 @@ ContextForge v0.1.0 establishes a fully local, Python-first repository-context c
 
 Python is the only first-class language, dynamic call edges are best-effort, feature hashing is not a trained embedding model, and the included benchmark is too small to establish general retrieval quality. See the README limitations and roadmap before using v0.1.0 as a production service.
 
+### Release validation
+
+The release was rebuilt from a fresh public GitHub clone. Formatting, linting, strict typing, 35 tests, 90% statement coverage, wheel/sdist contents, Docker build/run, dependency audit, dashboard API, full fixture benchmark, and an actual MCP stdio handshake all passed. Secret and machine-path scans found no tracked matches.

@@ -71,8 +71,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 12 — hardening and release
 
-- [ ] Full local and clean-clone validation
+- [x] Full local and clean-clone validation
 - [x] Latency and memory measurements
-- [ ] Secret and path audit
-- [ ] Release notes and initial tag
-- [ ] Clean tree and synchronized remote
+- [x] Secret and path audit
+- [x] Release notes and initial tag
+- [x] Clean tree and synchronized remote
