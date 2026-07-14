@@ -40,8 +40,8 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 6 — Git memory
 
-- [ ] Commit, diff-summary, hotspot, and co-change indexing
-- [ ] Confidence-gated history retrieval
+- [x] Commit, diff-summary, hotspot, and co-change indexing
+- [x] Confidence-gated history retrieval
 
 ## Phase 7 — routing, reranking, and query evolution
 
