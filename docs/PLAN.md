@@ -17,9 +17,9 @@ This is a living checklist. A checked box means implementation and proportionate
 
 ## Phase 2 — knowledge graph
 
-- [ ] Typed nodes and edges
-- [ ] Containment, definition, import, inheritance, call, and reference edges
-- [ ] Graph query tests
+- [x] Typed nodes and edges
+- [x] Containment, definition, import, inheritance, call, and reference edges
+- [x] Graph query tests
 
 ## Phase 3 — lexical and symbol retrieval
 
