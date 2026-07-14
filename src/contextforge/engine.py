@@ -89,7 +89,7 @@ class ContextForge:
         root = Path(repository).expanduser().resolve(strict=True)
         if not root.is_dir():
             raise NotADirectoryError(f"Repository path is not a directory: {root}")
-        return cls(root, config or ContextForgeConfig.from_environment())
+        return cls(root, config or ContextForgeConfig.from_repository(root))
 
     def index(self) -> IndexReport:
         """Incrementally index source, rebuild the graph, cache embeddings, and index Git."""

@@ -76,3 +76,40 @@ def test_git_memory_exposes_cochanges_and_hotspots(tmp_path: Path) -> None:
 
     assert history.co_changed_files("router.py")[0] == ("test_router.py", 2)
     assert history.hotspots()[0] in {("router.py", 2), ("test_router.py", 2)}
+
+
+def test_git_memory_tracks_file_renames(tmp_path: Path) -> None:
+    repository = _repository(tmp_path)
+    _git(repository, "mv", "notes.py", "release_notes.py")
+    _git(repository, "commit", "-m", "refactor: rename release metadata")
+    database = Database(tmp_path / "index.sqlite3")
+    RepositoryIndexer(repository, database).index()
+    GraphBuilder(repository, database).build()
+
+    GitHistoryIndexer(repository, database).index()
+    renames = GitHistoryRetriever(database).recent_renames()
+
+    assert renames[0]["old_path"] == "notes.py"
+    assert renames[0]["new_path"] == "release_notes.py"
+
+
+def test_git_memory_scopes_paths_to_selected_subdirectory(tmp_path: Path) -> None:
+    root = tmp_path / "monorepo"
+    package = root / "packages" / "router"
+    package.mkdir(parents=True)
+    _git(root, "init", "-b", "main")
+    _git(root, "config", "user.name", "ContextForge Test")
+    _git(root, "config", "user.email", "test@example.invalid")
+    (package / "routing.py").write_text("def dispatch():\n    return True\n")
+    (root / "unrelated.py").write_text("VALUE = 1\n")
+    _git(root, "add", ".")
+    _git(root, "commit", "-m", "feat: add router package and unrelated code")
+    database = Database(tmp_path / "subdir.sqlite3")
+    RepositoryIndexer(package, database).index()
+    GraphBuilder(package, database).build()
+
+    GitHistoryIndexer(package, database).index()
+    with database.connection() as connection:
+        paths = {str(row["path"]) for row in connection.execute("SELECT path FROM commit_files")}
+
+    assert paths == {"routing.py"}

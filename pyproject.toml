@@ -54,6 +54,9 @@ packages = ["src/contextforge"]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
 norecursedirs = ["tests/fixtures"]
+filterwarnings = [
+  "ignore:Using .*httpx.*starlette.testclient.*:Warning",
+]
 
 [tool.ruff]
 target-version = "py311"

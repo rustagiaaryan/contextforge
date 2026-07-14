@@ -19,6 +19,9 @@ from contextforge.models import EdgeType, NodeType
 from contextforge.retrieval.text import fts_query
 from contextforge.storage import Database
 
+FileChange = tuple[str, int, int, str, str | None]
+GitRecord = tuple[str, str, str, str, list[FileChange]]
+
 
 class GitIndexStats(BaseModel):
     """Git memory indexing result."""
@@ -92,22 +95,28 @@ class GitHistoryIndexer:
         try:
             if _run_git(self.repository, ["rev-parse", "--is-inside-work-tree"]).strip() != "true":
                 return GitIndexStats(available=False, error="Not a Git work tree")
+            git_root = Path(
+                _run_git(self.repository, ["rev-parse", "--show-toplevel"]).strip()
+            ).resolve(strict=True)
+            scope = self.repository.relative_to(git_root).as_posix()
             output = _run_git(
-                self.repository,
+                git_root,
                 [
                     "log",
                     "--no-merges",
                     f"--max-count={self.max_commits}",
                     "--format=%x1e%H%x1f%aI%x1f%an%x1f%s",
                     "--numstat",
+                    "--",
+                    scope,
                 ],
             )
         except (OSError, subprocess.SubprocessError) as error:
             return GitIndexStats(available=False, error=f"{type(error).__name__}: {error}")
-        records = self._parse_log(output)
+        records = self._scope_records(self._parse_log(output), scope)
         co_changes: Counter[tuple[str, str]] = Counter()
         for _, _, _, _, files in records:
-            paths = sorted({path for path, _, _ in files})
+            paths = sorted({path for path, _, _, _, _ in files})
             co_changes.update(combinations(paths, 2))
         with self.database.connection() as connection:
             connection.execute("DELETE FROM commits_fts")
@@ -132,8 +141,9 @@ class GitHistoryIndexer:
             }
             for commit_hash, authored_at, author, message, files in records:
                 summary = "; ".join(
-                    f"{path} (+{additions}/-{deletions})"
-                    for path, additions, deletions in files[:30]
+                    f"{status} {old_path + ' -> ' if old_path else ''}{path} "
+                    f"(+{additions}/-{deletions})"
+                    for path, additions, deletions, status, old_path in files[:30]
                 )
                 connection.execute(
                     """
@@ -142,7 +152,7 @@ class GitHistoryIndexer:
                     """,
                     (commit_hash, message, authored_at, author, summary),
                 )
-                paths = [path for path, _, _ in files]
+                paths = [path for path, _, _, _, _ in files]
                 connection.execute(
                     "INSERT INTO commits_fts(commit_hash, message, summary, changed_paths) "
                     "VALUES (?, ?, ?, ?)",
@@ -162,14 +172,14 @@ class GitHistoryIndexer:
                         json.dumps({"authored_at": authored_at, "commit_hash": commit_hash}),
                     ),
                 )
-                for path, additions, deletions in files:
+                for path, additions, deletions, status, old_path in files:
                     connection.execute(
                         """
                         INSERT INTO commit_files(
-                            commit_hash, path, status, additions, deletions
-                        ) VALUES (?, ?, 'M', ?, ?)
+                            commit_hash, path, status, old_path, additions, deletions
+                        ) VALUES (?, ?, ?, ?, ?, ?)
                         """,
-                        (commit_hash, path, additions, deletions),
+                        (commit_hash, path, status, old_path, additions, deletions),
                     )
                     if file_id := indexed_paths.get(path):
                         connection.execute(
@@ -217,9 +227,7 @@ class GitHistoryIndexer:
             co_change_pairs=len(co_changes),
         )
 
-    def _index_embeddings(
-        self, records: list[tuple[str, str, str, str, list[tuple[str, int, int]]]]
-    ) -> None:
+    def _index_embeddings(self, records: list[GitRecord]) -> None:
         if not self.provider:
             return
         with self.database.connection() as connection:
@@ -233,7 +241,7 @@ class GitHistoryIndexer:
             }
         pending: list[tuple[str, str, str]] = []
         for commit_hash, _, _, message, files in records:
-            text = f"{message}\n" + "\n".join(path for path, _, _ in files)
+            text = f"{message}\n" + "\n".join(path for path, _, _, _, _ in files)
             content_hash = sha256(text.encode()).hexdigest()
             unit_id = f"commit:{commit_hash}"
             if cached.get(unit_id) != content_hash:
@@ -266,10 +274,8 @@ class GitHistoryIndexer:
                     )
 
     @staticmethod
-    def _parse_log(
-        output: str,
-    ) -> list[tuple[str, str, str, str, list[tuple[str, int, int]]]]:
-        records: list[tuple[str, str, str, str, list[tuple[str, int, int]]]] = []
+    def _parse_log(output: str) -> list[GitRecord]:
+        records: list[GitRecord] = []
         for block in output.split("\x1e"):
             block = block.strip()
             if not block:
@@ -278,16 +284,48 @@ class GitHistoryIndexer:
             header = lines[0].split("\x1f", maxsplit=3)
             if len(header) != 4:
                 continue
-            files: list[tuple[str, int, int]] = []
+            files: list[FileChange] = []
             for line in lines[1:]:
                 parts = line.split("\t", maxsplit=2)
                 if len(parts) != 3:
                     continue
                 additions = int(parts[0]) if parts[0].isdigit() else 0
                 deletions = int(parts[1]) if parts[1].isdigit() else 0
-                files.append((parts[2], additions, deletions))
+                path, old_path = GitHistoryIndexer._parse_rename(parts[2])
+                status = "R" if old_path else ("A" if deletions == 0 else "M")
+                files.append((path, additions, deletions, status, old_path))
             records.append((header[0], header[1], header[2], header[3], files))
         return records
+
+    @staticmethod
+    def _parse_rename(path: str) -> tuple[str, str | None]:
+        if "=>" not in path:
+            return path, None
+        if "{" in path and "}" in path:
+            prefix, remainder = path.split("{", maxsplit=1)
+            renamed, suffix = remainder.split("}", maxsplit=1)
+            old, new = (part.strip() for part in renamed.split("=>", maxsplit=1))
+            return f"{prefix}{new}{suffix}", f"{prefix}{old}{suffix}"
+        old, new = (part.strip() for part in path.split("=>", maxsplit=1))
+        return new, old
+
+    @staticmethod
+    def _scope_records(records: list[GitRecord], scope: str) -> list[GitRecord]:
+        if scope == ".":
+            return records
+        prefix = f"{scope.rstrip('/')}/"
+        scoped: list[GitRecord] = []
+        for commit_hash, authored_at, author, message, files in records:
+            changes: list[FileChange] = []
+            for path, additions, deletions, status, old_path in files:
+                if not path.startswith(prefix):
+                    continue
+                relative = path.removeprefix(prefix)
+                relative_old = old_path.removeprefix(prefix) if old_path else None
+                changes.append((relative, additions, deletions, status, relative_old))
+            if changes:
+                scoped.append((commit_hash, authored_at, author, message, changes))
+        return scoped
 
 
 class GitHistoryRetriever:
@@ -406,6 +444,29 @@ class GitHistoryRetriever:
             for row in rows
             if str(row["path"]) in current
         ][:limit]
+
+    def recent_renames(self, *, limit: int = 20) -> list[dict[str, str]]:
+        """Return recent indexed file moves that may explain historical terminology."""
+        with self.database.connection() as connection:
+            rows = connection.execute(
+                """
+                SELECT cf.commit_hash, cf.old_path, cf.path, c.message, c.authored_at
+                FROM commit_files cf JOIN commits c ON c.commit_hash = cf.commit_hash
+                WHERE cf.status = 'R' AND cf.old_path IS NOT NULL
+                ORDER BY c.authored_at DESC LIMIT ?
+                """,
+                (limit,),
+            ).fetchall()
+        return [
+            {
+                "commit_hash": str(row["commit_hash"]),
+                "old_path": str(row["old_path"]),
+                "new_path": str(row["path"]),
+                "message": str(row["message"]),
+                "authored_at": str(row["authored_at"]),
+            }
+            for row in rows
+        ]
 
     def _lexical_scores(self, task: str, *, limit: int) -> dict[str, float]:
         expression = fts_query(task)

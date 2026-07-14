@@ -12,7 +12,7 @@ from typing import Any
 
 from contextforge.models import NodeType, ParsedFile, RelationHint, SourceUnit
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS metadata (
@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS commit_files (
     commit_hash TEXT NOT NULL,
     path TEXT NOT NULL,
     status TEXT NOT NULL,
+    old_path TEXT,
     additions INTEGER NOT NULL DEFAULT 0,
     deletions INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY(commit_hash, path)
@@ -151,6 +152,11 @@ class Database:
         with self.connection() as connection:
             connection.executescript(SCHEMA)
             connection.executescript(FTS_SCHEMA)
+            commit_columns = {
+                str(row[1]) for row in connection.execute("PRAGMA table_info(commit_files)")
+            }
+            if "old_path" not in commit_columns:
+                connection.execute("ALTER TABLE commit_files ADD COLUMN old_path TEXT")
             connection.execute(
                 "INSERT OR REPLACE INTO metadata(key, value) VALUES('schema_version', ?)",
                 (str(SCHEMA_VERSION),),
