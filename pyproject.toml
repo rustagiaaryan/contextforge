@@ -53,6 +53,7 @@ packages = ["src/contextforge"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
+norecursedirs = ["tests/fixtures"]
 
 [tool.ruff]
 target-version = "py311"
@@ -65,4 +66,3 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 packages = ["contextforge"]
-
