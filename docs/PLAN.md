@@ -25,7 +25,7 @@ This is a living checklist. A checked box means implementation and proportionate
 
 - [x] FTS/BM25 search across paths, symbols, docs, comments, and code
 - [x] Exact and fuzzy symbol search with provenance
-- [ ] Retrieval latency benchmark
+- [x] Retrieval latency benchmark
 
 ## Phase 4 — semantic retrieval
 
@@ -63,6 +63,7 @@ This is a living checklist. A checked box means implementation and proportionate
 
 - [x] Fixture task format, baselines, metrics, and ablations
 - [x] Checked-in compact measured results
+- [x] Pinned real historical-patch benchmark with token-reduction and package-recall metrics
 
 ## Phase 11 — dashboard and demo
 

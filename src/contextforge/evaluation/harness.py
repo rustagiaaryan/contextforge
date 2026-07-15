@@ -24,6 +24,7 @@ from contextforge.evaluation.models import (
 from contextforge.models import EdgeType, NodeType
 from contextforge.optimization import BudgetOptimizer
 from contextforge.optimization.selector import candidate_render_cost
+from contextforge.optimization.tokens import estimate_tokens
 from contextforge.reranking import WeightedReranker
 from contextforge.retrieval import (
     GitHistoryRetriever,
@@ -56,32 +57,42 @@ class Evaluator:
         top_k: int = 10,
         token_budget: int = 4_000,
         limit: int | None = None,
+        measure_memory: bool = True,
     ) -> EvaluationRun:
         """Run requested configurations and ablations with measured latency and memory."""
         tasks = self.tasks[:limit] if limit else self.tasks
         results: list[TaskEvaluation] = []
         engines: dict[Path, ContextForge] = {}
+        repository_tokens: dict[Path, int] = {}
         index_measurements: list[IndexMeasurement] = []
         for task in tasks:
             repository = (self.dataset.parent / task.repository).resolve(strict=True)
             engine = engines.get(repository)
             if engine is None:
                 engine = ContextForge.open(repository)
-                tracemalloc.start()
-                tracemalloc.reset_peak()
+                if measure_memory:
+                    tracemalloc.start()
+                    tracemalloc.reset_peak()
                 started = time.perf_counter()
                 report = engine.index()
                 clean_latency = (time.perf_counter() - started) * 1000
-                _, clean_peak = tracemalloc.get_traced_memory()
-                tracemalloc.stop()
+                clean_peak = 0
+                if measure_memory:
+                    _, clean_peak = tracemalloc.get_traced_memory()
+                    tracemalloc.stop()
                 started = time.perf_counter()
                 incremental = engine.index()
                 incremental_latency = (time.perf_counter() - started) * 1000
+                repository_source_tokens = sum(
+                    estimate_tokens(unit.content)
+                    for unit in engine.database.list_units(node_types=(NodeType.FILE,))
+                )
                 index_measurements.append(
                     IndexMeasurement(
                         repository=Path(task.repository).name,
                         files=report.source.discovered_files,
                         source_units=len(engine.database.list_units()),
+                        repository_source_tokens=repository_source_tokens,
                         clean_index_latency_ms=clean_latency,
                         clean_peak_memory_mb=clean_peak / 1_048_576,
                         incremental_index_latency_ms=incremental_latency,
@@ -92,6 +103,8 @@ class Evaluator:
                     )
                 )
                 engines[repository] = engine
+                repository_tokens[repository] = repository_source_tokens
+            repository_source_tokens = repository_tokens[repository]
             for configuration in configurations:
                 results.append(
                     self._evaluate_one(
@@ -101,6 +114,8 @@ class Evaluator:
                         ablation=None,
                         top_k=top_k,
                         token_budget=token_budget,
+                        repository_source_tokens=repository_source_tokens,
+                        measure_memory=measure_memory,
                     )
                 )
             for ablation in ablations:
@@ -112,6 +127,8 @@ class Evaluator:
                         ablation=ablation,
                         top_k=top_k,
                         token_budget=token_budget,
+                        repository_source_tokens=repository_source_tokens,
+                        measure_memory=measure_memory,
                     )
                 )
         aggregates: list[AggregateResult] = []
@@ -138,6 +155,7 @@ class Evaluator:
             platform=platform.platform(),
             top_k=top_k,
             token_budget=token_budget,
+            memory_tracing_enabled=measure_memory,
             index_measurements=tuple(index_measurements),
             results=tuple(results),
             aggregates=tuple(aggregates),
@@ -152,9 +170,12 @@ class Evaluator:
         ablation: Ablation | None,
         top_k: int,
         token_budget: int,
+        repository_source_tokens: int,
+        measure_memory: bool,
     ) -> TaskEvaluation:
-        tracemalloc.start()
-        tracemalloc.reset_peak()
+        if measure_memory:
+            tracemalloc.start()
+            tracemalloc.reset_peak()
         started = time.perf_counter()
         items, graph_expansions = self._retrieve(
             engine,
@@ -165,8 +186,10 @@ class Evaluator:
             top_k=top_k,
         )
         latency = (time.perf_counter() - started) * 1000
-        _, peak = tracemalloc.get_traced_memory()
-        tracemalloc.stop()
+        peak = 0
+        if measure_memory:
+            _, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
         metrics = compute_metrics(
             task,
             items,
@@ -174,6 +197,7 @@ class Evaluator:
             latency_ms=latency,
             peak_memory_mb=peak / 1_048_576,
             graph_expansions=graph_expansions,
+            repository_source_tokens=repository_source_tokens,
         )
         return TaskEvaluation(
             task_id=task.id,

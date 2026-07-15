@@ -114,6 +114,12 @@ contextforge evaluate \
   --dataset benchmarks/sample_tasks.jsonl \
   --token-budget 2000 --top-k 3 --ablations
 
+# Network-opt-in evaluation against pinned real public fixes
+contextforge evaluate-history \
+  --manifest benchmarks/historical_patches.jsonl \
+  --workspace .contextforge/historical-benchmark \
+  --token-budget 8000 --top-k 10
+
 # Local visualization and stdio MCP server
 contextforge dashboard ./repository --open
 contextforge mcp
@@ -174,7 +180,37 @@ The package also contains its route, initial anchors, one-pass query evolution, 
 
 The graph supplements search rather than replacing it. Dynamic Python relationships remain confidence-weighted best-effort facts, never authoritative static analysis. Read the full [architecture](docs/ARCHITECTURE.md) and [decision records](docs/DECISIONS.md).
 
-## Preliminary measured evaluation
+## Real historical-patch evaluation
+
+ContextForge was evaluated on 12 pinned, merged bug-fix pull requests: four each from
+[Click](https://github.com/pallets/click), [HTTPX](https://github.com/encode/httpx), and
+[Typer](https://github.com/fastapi/typer). Each task uses the PR title as the query, checks out
+the repository immediately before the fix, and treats the Python files changed by the real
+developer patch as gold evidence. The manifest validates every base/fix commit and changed-file
+label before evaluation.
+
+At an 8,000-token budget and K=10, the checked
+[`historical_patches.json`](benchmarks/results/historical_patches.json) run measured:
+
+| Configuration | Package hit rate | Package file recall | All fix files found | Avg evidence tokens | Token reduction |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Filename baseline | 8.3% | 8.3% | 8.3% | 13,596 | 90.6% |
+| BM25 only | 58.3% | 42.4% | 33.3% | 5,512 | 97.2% |
+| Semantic only | 75.0% | 48.6% | 25.0% | 2,239 | 98.7% |
+| Hybrid | 100.0% | 80.6% | 58.3% | 7,954 | 95.6% |
+| Hybrid + graph | **100.0%** | **88.9%** | **75.0%** | 7,966 | 95.6% |
+| Hybrid + graph + history | 100.0% | 84.7% | 66.7% | 7,978 | 95.6% |
+| Full adaptive package | 91.7% | 69.4% | 41.7% | 5,742 | **96.8%** |
+
+The full package retrieved at least one file from the eventual fix in 11 of 12 tasks, selected
+18 distinct files / 36 source ranges on average, and reduced the estimated source context from
+193,838 to 5,742 tokens. All 12 full packages stayed within the requested budget. Package hit
+rate is **not patch success**: this benchmark measures whether useful evidence was retrieved,
+not whether an agent or developer completed the fix. It is curated and small; the 95% Wilson
+interval for the 11/12 hit rate is 64.6%–98.5%. See [Evaluation](docs/EVALUATION.md) for the
+selection policy, exact definitions, limitations, and reproduction command.
+
+## Preliminary fixture evaluation
 
 These are actual results from [`benchmarks/results/preliminary.json`](benchmarks/results/preliminary.json), produced on 2026-07-14 with Python 3.11.12 on macOS arm64:
 
@@ -188,24 +224,27 @@ The dataset is only three deterministic tasks over a four-file Python fixture. I
 
 | Configuration | File Recall@3 | File Precision@3 | MRR | NDCG@3 | Avg context tokens | Retrieval ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Filename baseline | 0.778 | 0.556 | 0.500 | 0.564 | 245 | 1.41 |
-| BM25 only | 0.889 | 0.667 | 1.000 | 0.922 | 294 | 10.18 |
-| Semantic only | 0.778 | 0.556 | 1.000 | 0.823 | 285 | 8.99 |
-| Hybrid | 0.889 | 0.667 | 1.000 | 0.922 | 263 | 27.49 |
-| Hybrid + graph | 0.889 | 0.667 | 1.000 | 0.922 | 275 | 81.45 |
-| Hybrid + graph + history | 0.889 | 0.667 | 1.000 | 0.922 | 275 | 94.32 |
-| Full adaptive pipeline | **0.889** | **0.667** | **1.000** | **0.922** | 261 | 105.00 |
+| Filename baseline | 0.778 | 0.556 | 0.500 | 0.564 | 245 | 1.42 |
+| BM25 only | 0.889 | 0.667 | 1.000 | 0.922 | 294 | 10.01 |
+| Semantic only | 0.778 | 0.556 | 1.000 | 0.823 | 285 | 9.05 |
+| Hybrid | 0.889 | 0.667 | 1.000 | 0.922 | 619 | 27.88 |
+| Hybrid + graph | 0.889 | 0.667 | 1.000 | 0.922 | 655 | 77.33 |
+| Hybrid + graph + history | 0.889 | 0.667 | 1.000 | 0.922 | 655 | 85.65 |
+| Full adaptive pipeline | **0.889** | **0.667** | **1.000** | **0.922** | 885 | 103.21 |
 
-At K=3, the full pipeline improves file recall by 0.111, MRR by 0.500, and NDCG by 0.358 over the filename baseline while using 16 more estimated context tokens on average. BM25 and hybrid match full retrieval quality on this tiny corpus; graph/history do not improve top-three quality here and add latency. That negative result is intentionally reported.
+At K=3, the full pipeline improves file recall by 0.111, MRR by 0.500, and NDCG by
+0.358 over the filename baseline. The package costs more than sending this four-file fixture
+because explanations and provenance dominate its 198 raw-source-token baseline. This tiny
+corpus validates machinery; it is not a compression benchmark.
 
 Selected ablation findings:
 
 | Variant | File Recall@3 | NDCG@3 | Avg tokens | Retrieval ms |
 | --- | ---: | ---: | ---: | ---: |
-| Full | 0.889 | 0.922 | 261 | 105.00 |
-| Without graph | 0.889 | 0.922 | 275 | 47.02 |
-| Without token optimization | 0.889 | 0.922 | 340 | 79.77 |
-| Without redundancy penalty | 0.778 | 0.844 | 314 | 84.13 |
+| Full | 0.889 | 0.922 | 885 | 103.21 |
+| Without graph | 0.889 | 0.922 | 738 | 46.65 |
+| Without token optimization | 0.889 | 0.922 | 1,144 | 78.01 |
+| Without redundancy penalty | 0.778 | 0.844 | 1,144 | 82.10 |
 
 The full pipeline's gold-line coverage (0.415) is lower than the filename baseline (0.688) because it prefers compact symbol ranges over whole files. Both metrics are retained because token-efficient evidence and raw line coverage measure different tradeoffs. See [Evaluation](docs/EVALUATION.md) for metric definitions and limitations.
 
@@ -242,14 +281,16 @@ Retrieved comments can still contain prompt injection; downstream agents must tr
 - Python is the only first-class parser. Interfaces are ready for additional languages, but no Tree-sitter adapters ship yet.
 - Call/reference resolution is best-effort for dynamic Python; there is no control-flow or data-flow slice in v0.1.
 - The default embedding provider is deterministic feature hashing, not a trained semantic model.
-- The included benchmark is intentionally tiny. External ContextBench-style tasks require opt-in local conversion and repository checkout.
-- The reranker is an explainable weighted model, not learned-to-rank. There is no downstream patch-success evaluation yet.
+- The real benchmark is a curated 12-task retrieval proxy, not an untouched or representative
+  holdout. There is no downstream patch-success or developer-productivity evaluation yet.
+- The reranker is an explainable weighted model, not learned-to-rank; top-10 recall trails its
+  complete-package recall and hybrid + graph outperforms the full adaptive route on this suite.
 - History gating favors precision and can omit relevant patches whose messages and diffs use unrelated terminology.
 
 ## Roadmap
 
 1. Tree-sitter language adapters and Python definition-use/data-flow slicing.
-2. Opt-in trained local embeddings and cross-encoder reranking.
+2. Opt-in trained local embeddings, cross-encoder reranking, and a larger untouched holdout suite.
 3. Native ContextBench subset adapter and larger multi-repository evaluation.
 4. Incremental graph/history rebuilding and approximate nearest-neighbor search.
 5. Downstream agent task-success experiments on issue-resolution benchmarks.
@@ -273,4 +314,3 @@ See [Contributing](CONTRIBUTING.md), the living [plan](docs/PLAN.md), and [relea
 ## License
 
 [MIT](LICENSE) © 2026 Aaryan Rustagi
-

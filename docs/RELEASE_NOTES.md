@@ -1,5 +1,17 @@
 # Release notes
 
+## Unreleased
+
+- Added a pinned, network-opt-in historical-patch benchmark covering 12 real Click, HTTPX, and
+  Typer fixes, with exact patch-label verification and whole-repository token baselines.
+- Added package Hit/Recall/Precision, complete recall, tokens saved, reduction rate, and explicit
+  memory-tracing metadata to evaluation output.
+- Hardened Python parsing for overloads/conditional duplicate definitions and replaced repeated
+  AST source rescans with byte-offset slicing.
+- Bounded co-change inference for mass migrations while retaining their commit/file history.
+- Measured 11/12 package hits, 69.4% average fix-file recall, and 96.8% estimated token reduction
+  for the full adaptive pipeline; these are retrieval-proxy metrics, not patch success.
+
 ## v0.1.0 — Initial alpha
 
 ContextForge v0.1.0 establishes a fully local, Python-first repository-context compiler.

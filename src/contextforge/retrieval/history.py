@@ -84,11 +84,13 @@ class GitHistoryIndexer:
         *,
         provider: EmbeddingProvider | None = None,
         max_commits: int = 500,
+        max_cochange_files: int = 50,
     ) -> None:
         self.repository = repository.resolve(strict=True)
         self.database = database
         self.provider = provider
         self.max_commits = max(1, max_commits)
+        self.max_cochange_files = max(1, max_cochange_files)
 
     def index(self) -> GitIndexStats:
         """Rebuild bounded Git memory without failing non-Git repositories."""
@@ -117,7 +119,10 @@ class GitHistoryIndexer:
         co_changes: Counter[tuple[str, str]] = Counter()
         for _, _, _, _, files in records:
             paths = sorted({path for path, _, _, _, _ in files})
-            co_changes.update(combinations(paths, 2))
+            # Mass migrations and generated-code sweeps do not imply that hundreds
+            # of files are meaningfully related. They also create O(n²) pair noise.
+            if 1 < len(paths) <= self.max_cochange_files:
+                co_changes.update(combinations(paths, 2))
         with self.database.connection() as connection:
             connection.execute("DELETE FROM commits_fts")
             connection.execute("DELETE FROM commit_files")

@@ -1,26 +1,3468 @@
 {
-  "schema_version": 1,
-  "label": "preliminary",
-  "scope": "Three deterministic tasks over the checked-in four-file Python fixture; not a broad external benchmark.",
-  "command": "uv run contextforge evaluate --dataset benchmarks/sample_tasks.jsonl --token-budget 2000 --top-k 3 --ablations",
+  "dataset_path": "sample_tasks.jsonl",
   "dataset_sha256": "d9e9462585322bf4c6e1e261d24d2e0408a0a58005009be08850de00b8c3ab10",
-  "run_at": "2026-07-14T22:18:30.287671Z",
+  "run_at": "2026-07-15T01:12:18.163249Z",
   "python_version": "3.11.12",
   "platform": "macOS-14.6.1-arm64-arm-64bit",
   "top_k": 3,
   "token_budget": 2000,
+  "memory_tracing_enabled": true,
   "index_measurements": [
     {
       "repository": "sample_repo",
       "files": 4,
       "source_units": 14,
-      "clean_index_latency_ms": 151.3209579861723,
-      "clean_peak_memory_mb": 0.2354583740234375,
-      "incremental_index_latency_ms": 52.70470801042393,
+      "repository_source_tokens": 198,
+      "clean_index_latency_ms": 160.7428750139661,
+      "clean_peak_memory_mb": 0.22935199737548828,
+      "incremental_index_latency_ms": 53.63241699524224,
       "incremental_files_reparsed": 0,
       "graph_nodes": 17,
       "graph_edges": 31,
       "commits": 1
+    }
+  ],
+  "results": [
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "filename_baseline",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 0.6666666666666666,
+        "package_file_precision": 0.6666666666666666,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.0,
+        "symbol_recall_at_k": 0.0,
+        "symbol_precision_at_k": 0.0,
+        "mrr": 0.5,
+        "ndcg_at_k": 0.5307212739772434,
+        "gold_line_coverage": 0.8333333333333334,
+        "context_tokens": 245,
+        "repository_source_tokens": 198,
+        "tokens_saved": -47,
+        "token_reduction_fraction": -0.23737373737373738,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
+        "tokens_per_relevant_file": 122.5,
+        "retrieval_latency_ms": 1.408333017025143,
+        "peak_memory_mb": 0.01644611358642578,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.0,
+          "estimated_tokens": 44,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.0,
+          "estimated_tokens": 139,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app/utils.py",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.0,
+          "estimated_tokens": 62,
+          "sources": [
+            "path"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "bm25_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 0.6666666666666666,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 346,
+        "repository_source_tokens": 198,
+        "tokens_saved": -148,
+        "token_reduction_fraction": -0.7474747474747475,
+        "selected_item_count": 3,
+        "selected_file_count": 2,
+        "tokens_per_relevant_file": 173.0,
+        "retrieval_latency_ms": 10.073082987219095,
+        "peak_memory_mb": 0.13438987731933594,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 2,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8389046979868766,
+          "estimated_tokens": 146,
+          "sources": [
+            "bm25"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6777781818196502,
+          "estimated_tokens": 89,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.3886534369157514,
+          "estimated_tokens": 111,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "semantic_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.3333333333333333,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 0.3333333333333333,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.0,
+        "symbol_recall_at_k": 0.0,
+        "symbol_precision_at_k": 0.0,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.46927872602275644,
+        "gold_line_coverage": 0.6666666666666666,
+        "context_tokens": 299,
+        "repository_source_tokens": 198,
+        "tokens_saved": -101,
+        "token_reduction_fraction": -0.51010101010101,
+        "selected_item_count": 3,
+        "selected_file_count": 1,
+        "tokens_per_relevant_file": 299.0,
+        "retrieval_latency_ms": 8.858625020366162,
+        "peak_memory_mb": 0.12200260162353516,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.__init__",
+          "start_line": 9,
+          "end_line": 10,
+          "score": 0.18389680470702163,
+          "estimated_tokens": 54,
+          "sources": [
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.16608797662962424,
+          "estimated_tokens": 102,
+          "sources": [
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.16266896449060278,
+          "estimated_tokens": 143,
+          "sources": [
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "hybrid",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 497,
+        "repository_source_tokens": 198,
+        "tokens_saved": -299,
+        "token_reduction_fraction": -1.5101010101010102,
+        "selected_item_count": 5,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 248.5,
+        "retrieval_latency_ms": 26.653750042896718,
+        "peak_memory_mb": 0.1923818588256836,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 3,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6883788015000393,
+          "estimated_tokens": 91,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8421676976880457,
+          "estimated_tokens": 160,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.36838843414928285,
+          "estimated_tokens": 58,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "hybrid_graph",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 560,
+        "repository_source_tokens": 198,
+        "tokens_saved": -362,
+        "token_reduction_fraction": -1.8282828282828283,
+        "selected_item_count": 6,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 280.0,
+        "retrieval_latency_ms": 74.82212502509356,
+        "peak_memory_mb": 0.34491443634033203,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 4,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6639046066664919,
+          "estimated_tokens": 94,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8421676976880457,
+          "estimated_tokens": 160,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.36838843414928285,
+          "estimated_tokens": 58,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "hybrid_graph_history",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 560,
+        "repository_source_tokens": 198,
+        "tokens_saved": -362,
+        "token_reduction_fraction": -1.8282828282828283,
+        "selected_item_count": 6,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 280.0,
+        "retrieval_latency_ms": 79.97608301229775,
+        "peak_memory_mb": 0.3424034118652344,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 4,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6639046066664919,
+          "estimated_tokens": 94,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8421676976880457,
+          "estimated_tokens": 160,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.36838843414928285,
+          "estimated_tokens": 58,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.3333333333333333,
+        "context_tokens": 869,
+        "repository_source_tokens": 198,
+        "tokens_saved": -671,
+        "token_reduction_fraction": -3.388888888888889,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 434.5,
+        "retrieval_latency_ms": 120.86529197404161,
+        "peak_memory_mb": 0.3992624282836914,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.9684857665996621,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.8884517455409685,
+          "estimated_tokens": 79,
+          "sources": [
+            "bm25",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "symbol_search",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.__init__",
+          "start_line": 9,
+          "end_line": 10,
+          "score": 0.7488361158258932,
+          "estimated_tokens": 73,
+          "sources": [
+            "bm25",
+            "semantic",
+            "graph_expansion",
+            "symbol_search",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_semantic",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.5555555555555556,
+        "context_tokens": 508,
+        "repository_source_tokens": 198,
+        "tokens_saved": -310,
+        "token_reduction_fraction": -1.5656565656565657,
+        "selected_item_count": 5,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 254.0,
+        "retrieval_latency_ms": 96.17312502814457,
+        "peak_memory_mb": 0.33035850524902344,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8343938049887011,
+          "estimated_tokens": 100,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.6807198004199011,
+          "estimated_tokens": 122,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.37199442750076733,
+          "estimated_tokens": 60,
+          "sources": [
+            "bm25",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_graph",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.5555555555555556,
+        "context_tokens": 611,
+        "repository_source_tokens": 198,
+        "tokens_saved": -413,
+        "token_reduction_fraction": -2.085858585858586,
+        "selected_item_count": 6,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 305.5,
+        "retrieval_latency_ms": 45.35858298186213,
+        "peak_memory_mb": 0.24667930603027344,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8692705803835288,
+          "estimated_tokens": 99,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.8552997558915301,
+          "estimated_tokens": 117,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.3860392617585902,
+          "estimated_tokens": 63,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_history",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.5555555555555556,
+        "context_tokens": 689,
+        "repository_source_tokens": 198,
+        "tokens_saved": -491,
+        "token_reduction_fraction": -2.4797979797979797,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 344.5,
+        "retrieval_latency_ms": 85.2310829795897,
+        "peak_memory_mb": 0.3423891067504883,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348878885118177,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.6811688803672655,
+          "estimated_tokens": 125,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.3860392617585902,
+          "estimated_tokens": 63,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_test_discovery",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.5555555555555556,
+        "context_tokens": 685,
+        "repository_source_tokens": 198,
+        "tokens_saved": -487,
+        "token_reduction_fraction": -2.45959595959596,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 342.5,
+        "retrieval_latency_ms": 90.81879199948162,
+        "peak_memory_mb": 0.3424186706542969,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.68474073501133,
+          "estimated_tokens": 98,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.6811688803672655,
+          "estimated_tokens": 125,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.3860392617585902,
+          "estimated_tokens": 63,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_query_evolution",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 564,
+        "repository_source_tokens": 198,
+        "tokens_saved": -366,
+        "token_reduction_fraction": -1.8484848484848484,
+        "selected_item_count": 6,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 282.0,
+        "retrieval_latency_ms": 83.08208303060383,
+        "peak_memory_mb": 0.3423805236816406,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8323875531104371,
+          "estimated_tokens": 98,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8421676976880457,
+          "estimated_tokens": 160,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.36838843414928285,
+          "estimated_tokens": 58,
+          "sources": [
+            "bm25",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_routing",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.5555555555555556,
+        "context_tokens": 689,
+        "repository_source_tokens": 198,
+        "tokens_saved": -491,
+        "token_reduction_fraction": -2.4797979797979797,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 344.5,
+        "retrieval_latency_ms": 98.86354202171788,
+        "peak_memory_mb": 0.34194278717041016,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348878885118177,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.6811688803672655,
+          "estimated_tokens": 125,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.3860392617585902,
+          "estimated_tokens": 63,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_token_optimization",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 1141,
+        "repository_source_tokens": 198,
+        "tokens_saved": -943,
+        "token_reduction_fraction": -4.762626262626263,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 570.5,
+        "retrieval_latency_ms": 78.64933297969401,
+        "peak_memory_mb": 0.3423271179199219,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8464490191668705,
+          "estimated_tokens": 164,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348878885118177,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.6811688803672655,
+          "estimated_tokens": 125,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "mounted-prefix",
+      "configuration": "full_adaptive",
+      "ablation": "without_redundancy_penalty",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.3333333333333333,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.7777777777777778,
+        "context_tokens": 1141,
+        "repository_source_tokens": 198,
+        "tokens_saved": -943,
+        "token_reduction_fraction": -4.762626262626263,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 570.5,
+        "retrieval_latency_ms": 76.36529102455825,
+        "peak_memory_mb": 0.34128284454345703,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348878885118177,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.8211688803672655,
+          "estimated_tokens": 125,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.8464490191668705,
+          "estimated_tokens": 164,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "filename_baseline",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.3333333333333333,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.0,
+        "symbol_precision_at_k": 0.0,
+        "mrr": 0.5,
+        "ndcg_at_k": 0.6309297535714575,
+        "gold_line_coverage": 0.8571428571428571,
+        "context_tokens": 245,
+        "repository_source_tokens": 198,
+        "tokens_saved": -47,
+        "token_reduction_fraction": -0.23737373737373738,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
+        "tokens_per_relevant_file": 245.0,
+        "retrieval_latency_ms": 1.46116700489074,
+        "peak_memory_mb": 0.016373634338378906,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 0.3333333333333333
+      },
+      "selected": [
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.0,
+          "estimated_tokens": 44,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.0,
+          "estimated_tokens": 139,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app/utils.py",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.0,
+          "estimated_tokens": 62,
+          "sources": [
+            "path"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "bm25_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 255,
+        "repository_source_tokens": 198,
+        "tokens_saved": -57,
+        "token_reduction_fraction": -0.2878787878787879,
+        "selected_item_count": 3,
+        "selected_file_count": 1,
+        "tokens_per_relevant_file": 255.0,
+        "retrieval_latency_ms": 9.200792002957314,
+        "peak_memory_mb": 0.11282730102539062,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 2,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9690766772644602,
+          "estimated_tokens": 66,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.912733425974345,
+          "estimated_tokens": 77,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.8989431871560509,
+          "estimated_tokens": 112,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "semantic_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.8571428571428571,
+        "context_tokens": 263,
+        "repository_source_tokens": 198,
+        "tokens_saved": -65,
+        "token_reduction_fraction": -0.3282828282828283,
+        "selected_item_count": 3,
+        "selected_file_count": 1,
+        "tokens_per_relevant_file": 263.0,
+        "retrieval_latency_ms": 9.050416992977262,
+        "peak_memory_mb": 0.12012577056884766,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.25233090280896214,
+          "estimated_tokens": 54,
+          "sources": [
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.1873354187642745,
+          "estimated_tokens": 66,
+          "sources": [
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.14770976232817576,
+          "estimated_tokens": 143,
+          "sources": [
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "hybrid",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 790,
+        "repository_source_tokens": 198,
+        "tokens_saved": -592,
+        "token_reduction_fraction": -2.98989898989899,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 790.0,
+        "retrieval_latency_ms": 27.307124983053654,
+        "peak_memory_mb": 0.18729019165039062,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 3,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9693796666265445,
+          "estimated_tokens": 69,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.9152326183213986,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.7018007498953182,
+          "estimated_tokens": 91,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "hybrid_graph",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 827,
+        "repository_source_tokens": 198,
+        "tokens_saved": -629,
+        "token_reduction_fraction": -3.176767676767677,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 827.0,
+        "retrieval_latency_ms": 85.1192920235917,
+        "peak_memory_mb": 0.3644447326660156,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.934640955938106,
+          "estimated_tokens": 76,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.8845216712556411,
+          "estimated_tokens": 87,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6797520025844604,
+          "estimated_tokens": 94,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "hybrid_graph_history",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 827,
+        "repository_source_tokens": 198,
+        "tokens_saved": -629,
+        "token_reduction_fraction": -3.176767676767677,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 827.0,
+        "retrieval_latency_ms": 92.40491699893028,
+        "peak_memory_mb": 0.3639039993286133,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.934640955938106,
+          "estimated_tokens": 76,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.8845216712556411,
+          "estimated_tokens": 87,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6797520025844604,
+          "estimated_tokens": 94,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.2857142857142857,
+        "context_tokens": 837,
+        "repository_source_tokens": 198,
+        "tokens_saved": -639,
+        "token_reduction_fraction": -3.227272727272727,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 837.0,
+        "retrieval_latency_ms": 57.314416975714266,
+        "peak_memory_mb": 0.33289337158203125,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 4,
+        "selected_context_relevance": 0.3333333333333333
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9697175452670913,
+          "estimated_tokens": 73,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.9287969910554177,
+          "estimated_tokens": 95,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.9153067029417417,
+          "estimated_tokens": 89,
+          "sources": [
+            "symbol_search",
+            "semantic",
+            "bm25",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_semantic",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 864,
+        "repository_source_tokens": 198,
+        "tokens_saved": -666,
+        "token_reduction_fraction": -3.3636363636363638,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 864.0,
+        "retrieval_latency_ms": 101.06062499107793,
+        "peak_memory_mb": 0.3205718994140625,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9345265599618241,
+          "estimated_tokens": 78,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8345983450700306,
+          "estimated_tokens": 100,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.922422328832476,
+          "estimated_tokens": 123,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_graph",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 841,
+        "repository_source_tokens": 198,
+        "tokens_saved": -643,
+        "token_reduction_fraction": -3.2474747474747474,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 841.0,
+        "retrieval_latency_ms": 46.25079198740423,
+        "peak_memory_mb": 0.24503517150878906,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 5,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9694580387827195,
+          "estimated_tokens": 73,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8685925029404444,
+          "estimated_tokens": 99,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.957263997966057,
+          "estimated_tokens": 119,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_history",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 876,
+        "repository_source_tokens": 198,
+        "tokens_saved": -678,
+        "token_reduction_fraction": -3.4242424242424243,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 876.0,
+        "retrieval_latency_ms": 102.66704100649804,
+        "peak_memory_mb": 0.3638124465942383,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9346884420035284,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348533255388246,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.9224692615302039,
+          "estimated_tokens": 126,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_test_discovery",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 872,
+        "repository_source_tokens": 198,
+        "tokens_saved": -674,
+        "token_reduction_fraction": -3.404040404040404,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 872.0,
+        "retrieval_latency_ms": 103.5381670226343,
+        "peak_memory_mb": 0.3640327453613281,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9346884420035284,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.6844527102363878,
+          "estimated_tokens": 98,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.9224692615302039,
+          "estimated_tokens": 126,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_query_evolution",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 831,
+        "repository_source_tokens": 198,
+        "tokens_saved": -633,
+        "token_reduction_fraction": -3.196969696969697,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 831.0,
+        "retrieval_latency_ms": 100.82012502243742,
+        "peak_memory_mb": 0.36395740509033203,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.934640955938106,
+          "estimated_tokens": 76,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8342892406205934,
+          "estimated_tokens": 98,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.8845216712556411,
+          "estimated_tokens": 87,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_routing",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 876,
+        "repository_source_tokens": 198,
+        "tokens_saved": -678,
+        "token_reduction_fraction": -3.4242424242424243,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 876.0,
+        "retrieval_latency_ms": 103.14662498421967,
+        "peak_memory_mb": 0.36374759674072266,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9346884420035284,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348533255388246,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.9224692615302039,
+          "estimated_tokens": 126,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_token_optimization",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 0.5,
+        "symbol_precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 1145,
+        "repository_source_tokens": 198,
+        "tokens_saved": -947,
+        "token_reduction_fraction": -4.782828282828283,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 1145.0,
+        "retrieval_latency_ms": 85.7521669822745,
+        "peak_memory_mb": 0.3640632629394531,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9346884420035284,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.9224692615302039,
+          "estimated_tokens": 126,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348533255388246,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "dispatch-symbol",
+      "configuration": "full_adaptive",
+      "ablation": "without_redundancy_penalty",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 0.3333333333333333,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.25,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.5714285714285714,
+        "context_tokens": 1145,
+        "repository_source_tokens": 198,
+        "tokens_saved": -947,
+        "token_reduction_fraction": -4.782828282828283,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 1145.0,
+        "retrieval_latency_ms": 90.49762500217184,
+        "peak_memory_mb": 0.3636283874511719,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.9346884420035284,
+          "estimated_tokens": 80,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8348533255388246,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount.resolve",
+          "start_line": 12,
+          "end_line": 14,
+          "score": 0.887081803533779,
+          "estimated_tokens": 91,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "filename_baseline",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 0.6666666666666666,
+        "package_file_precision": 0.6666666666666666,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.0,
+        "symbol_recall_at_k": 0.0,
+        "symbol_precision_at_k": 0.0,
+        "mrr": 0.5,
+        "ndcg_at_k": 0.5307212739772434,
+        "gold_line_coverage": 0.375,
+        "context_tokens": 245,
+        "repository_source_tokens": 198,
+        "tokens_saved": -47,
+        "token_reduction_fraction": -0.23737373737373738,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
+        "tokens_per_relevant_file": 122.5,
+        "retrieval_latency_ms": 1.3873749994672835,
+        "peak_memory_mb": 0.016429901123046875,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 1,
+        "selected_context_relevance": 0.6666666666666666
+      },
+      "selected": [
+        {
+          "file": "app/__init__.py",
+          "symbol": "app/__init__.py",
+          "start_line": 1,
+          "end_line": 1,
+          "score": 0.0,
+          "estimated_tokens": 44,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.0,
+          "estimated_tokens": 139,
+          "sources": [
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app/utils.py",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.0,
+          "estimated_tokens": 62,
+          "sources": [
+            "path"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "bm25_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 281,
+        "repository_source_tokens": 198,
+        "tokens_saved": -83,
+        "token_reduction_fraction": -0.41919191919191917,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
+        "tokens_per_relevant_file": 93.66666666666667,
+        "retrieval_latency_ms": 10.753415990620852,
+        "peak_memory_mb": 0.13579463958740234,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 3,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.8610708106154389,
+          "estimated_tokens": 79,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.735081586933319,
+          "estimated_tokens": 92,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.49422721404445946,
+          "estimated_tokens": 110,
+          "sources": [
+            "bm25",
+            "symbol_search"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "semantic_only",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 292,
+        "repository_source_tokens": 198,
+        "tokens_saved": -94,
+        "token_reduction_fraction": -0.47474747474747475,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
+        "tokens_per_relevant_file": 97.33333333333333,
+        "retrieval_latency_ms": 9.252541000023484,
+        "peak_memory_mb": 0.1207132339477539,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 2,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.19274908862914342,
+          "estimated_tokens": 68,
+          "sources": [
+            "semantic"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.18252912311764385,
+          "estimated_tokens": 81,
+          "sources": [
+            "semantic",
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app/routing.py",
+          "start_line": 1,
+          "end_line": 18,
+          "score": 0.16762620468458178,
+          "estimated_tokens": 143,
+          "sources": [
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "hybrid",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 569,
+        "repository_source_tokens": 198,
+        "tokens_saved": -371,
+        "token_reduction_fraction": -1.8737373737373737,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 189.66666666666666,
+        "retrieval_latency_ms": 29.693582968320698,
+        "peak_memory_mb": 0.19256591796875,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 4,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.8618566325667438,
+          "estimated_tokens": 81,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        },
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.7432960788243869,
+          "estimated_tokens": 94,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4260710339616377,
+          "estimated_tokens": 64,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "hybrid_graph",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 579,
+        "repository_source_tokens": 198,
+        "tokens_saved": -381,
+        "token_reduction_fraction": -1.9242424242424243,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 193.0,
+        "retrieval_latency_ms": 72.04950001323596,
+        "peak_memory_mb": 0.3266582489013672,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.7157598920443128,
+          "estimated_tokens": 97,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7923525286140406,
+          "estimated_tokens": 89,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4350640068636095,
+          "estimated_tokens": 71,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "hybrid_graph_history",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 579,
+        "repository_source_tokens": 198,
+        "tokens_saved": -381,
+        "token_reduction_fraction": -1.9242424242424243,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 193.0,
+        "retrieval_latency_ms": 84.57995898788795,
+        "peak_memory_mb": 0.32649803161621094,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.7157598920443128,
+          "estimated_tokens": 97,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7923525286140406,
+          "estimated_tokens": 89,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4350640068636095,
+          "estimated_tokens": 71,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": null,
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 949,
+        "repository_source_tokens": 198,
+        "tokens_saved": -751,
+        "token_reduction_fraction": -3.792929292929293,
+        "selected_item_count": 10,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 316.3333333333333,
+        "retrieval_latency_ms": 131.45849999273196,
+        "peak_memory_mb": 0.4044466018676758,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 8,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 1.0,
+          "estimated_tokens": 105,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.8893855124208729,
+          "estimated_tokens": 75,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.8939145846056732,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_semantic",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 776,
+        "repository_source_tokens": 198,
+        "tokens_saved": -578,
+        "token_reduction_fraction": -2.919191919191919,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 258.6666666666667,
+        "retrieval_latency_ms": 88.12662499258295,
+        "peak_memory_mb": 0.29216575622558594,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8747971796750553,
+          "estimated_tokens": 103,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7929258800819373,
+          "estimated_tokens": 90,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4389839776870657,
+          "estimated_tokens": 73,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_graph",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 762,
+        "repository_source_tokens": 198,
+        "tokens_saved": -564,
+        "token_reduction_fraction": -2.8484848484848486,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 254.0,
+        "retrieval_latency_ms": 48.3465000288561,
+        "peak_memory_mb": 0.24951457977294922,
+        "graph_expansions": 0,
+        "evidence_source_diversity": 6,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.909731672491483,
+          "estimated_tokens": 102,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.8629876398106043,
+          "estimated_tokens": 86,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4532789348668249,
+          "estimated_tokens": 68,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_history",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 786,
+        "repository_source_tokens": 198,
+        "tokens_saved": -588,
+        "token_reduction_fraction": -2.9696969696969697,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 262.0,
+        "retrieval_latency_ms": 83.29120796406642,
+        "peak_memory_mb": 0.32614707946777344,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 8,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8752543346404511,
+          "estimated_tokens": 105,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7932405467947258,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.45105306803414086,
+          "estimated_tokens": 75,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_test_discovery",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 782,
+        "repository_source_tokens": 198,
+        "tokens_saved": -584,
+        "token_reduction_fraction": -2.9494949494949494,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 260.6666666666667,
+        "retrieval_latency_ms": 86.59424999495968,
+        "peak_memory_mb": 0.32621002197265625,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.7277944527499416,
+          "estimated_tokens": 101,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7932405467947258,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.45105306803414086,
+          "estimated_tokens": 75,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_query_evolution",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 583,
+        "repository_source_tokens": 198,
+        "tokens_saved": -385,
+        "token_reduction_fraction": -1.9444444444444444,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 194.33333333333334,
+        "retrieval_latency_ms": 81.79762499639764,
+        "peak_memory_mb": 0.32629966735839844,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 7,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8738101873557756,
+          "estimated_tokens": 101,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7923525286140406,
+          "estimated_tokens": 89,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.4350640068636095,
+          "estimated_tokens": 71,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_routing",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 786,
+        "repository_source_tokens": 198,
+        "tokens_saved": -588,
+        "token_reduction_fraction": -2.9696969696969697,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 262.0,
+        "retrieval_latency_ms": 90.65933397505432,
+        "peak_memory_mb": 0.32614994049072266,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 8,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8752543346404511,
+          "estimated_tokens": 105,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7932405467947258,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.dispatch",
+          "start_line": 17,
+          "end_line": 18,
+          "score": 0.45105306803414086,
+          "estimated_tokens": 75,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_token_optimization",
+      "metrics": {
+        "file_recall_at_k": 1.0,
+        "file_precision_at_k": 1.0,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 1.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 1.0,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 1147,
+        "repository_source_tokens": 198,
+        "tokens_saved": -949,
+        "token_reduction_fraction": -4.792929292929293,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 382.3333333333333,
+        "retrieval_latency_ms": 69.62829199619591,
+        "peak_memory_mb": 0.32629966735839844,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 8,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8752543346404511,
+          "estimated_tokens": 105,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.7932405467947258,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/routing.py",
+          "symbol": "app.routing.Mount",
+          "start_line": 6,
+          "end_line": 14,
+          "score": 0.5293409717306269,
+          "estimated_tokens": 124,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "graph_expansion",
+            "call_graph",
+            "query_evolution"
+          ]
+        }
+      ]
+    },
+    {
+      "task_id": "join-path-test",
+      "configuration": "full_adaptive",
+      "ablation": "without_redundancy_penalty",
+      "metrics": {
+        "file_recall_at_k": 0.6666666666666666,
+        "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.0,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.75,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
+        "symbol_recall_at_k": 1.0,
+        "symbol_precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg_at_k": 0.7653606369886217,
+        "gold_line_coverage": 0.625,
+        "context_tokens": 1147,
+        "repository_source_tokens": 198,
+        "tokens_saved": -949,
+        "token_reduction_fraction": -4.792929292929293,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 573.5,
+        "retrieval_latency_ms": 79.44066601339728,
+        "peak_memory_mb": 0.35123157501220703,
+        "graph_expansions": 9,
+        "evidence_source_diversity": 8,
+        "selected_context_relevance": 1.0
+      },
+      "selected": [
+        {
+          "file": "tests/test_routing.py",
+          "symbol": "tests.test_routing.test_mounted_prefix_is_preserved",
+          "start_line": 4,
+          "end_line": 5,
+          "score": 0.8749663598751708,
+          "estimated_tokens": 105,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "related_tests",
+            "query_evolution",
+            "path"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app.utils.join_path",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.8282405467947258,
+          "estimated_tokens": 93,
+          "sources": [
+            "bm25",
+            "symbol_search",
+            "semantic",
+            "call_graph",
+            "graph_expansion",
+            "query_evolution"
+          ]
+        },
+        {
+          "file": "app/utils.py",
+          "symbol": "app/utils.py",
+          "start_line": 1,
+          "end_line": 3,
+          "score": 0.650622115196592,
+          "estimated_tokens": 81,
+          "sources": [
+            "bm25",
+            "semantic",
+            "query_evolution"
+          ]
+        }
+      ]
     }
   ],
   "aggregates": [
@@ -31,15 +3473,26 @@
       "metrics": {
         "file_recall_at_k": 0.7777777777777777,
         "file_precision_at_k": 0.5555555555555555,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.3333333333333333,
+        "package_file_recall": 0.7777777777777777,
+        "package_file_precision": 0.5555555555555555,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.3333333333333333,
         "symbol_recall_at_k": 0.0,
         "symbol_precision_at_k": 0.0,
         "mrr": 0.5,
         "ndcg_at_k": 0.5641241005086481,
         "gold_line_coverage": 0.6884920634920636,
         "context_tokens": 245,
+        "repository_source_tokens": 198,
+        "tokens_saved": -47,
+        "token_reduction_fraction": -0.23737373737373738,
+        "selected_item_count": 3,
+        "selected_file_count": 3,
         "tokens_per_relevant_file": 163.33333333333334,
-        "retrieval_latency_ms": 1.4105690061114728,
-        "peak_memory_mb": 0.0164340337117513,
+        "retrieval_latency_ms": 1.4189583404610555,
+        "peak_memory_mb": 0.016416549682617188,
         "graph_expansions": 0,
         "evidence_source_diversity": 1,
         "selected_context_relevance": 0.5555555555555555
@@ -52,15 +3505,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 0.8888888888888888,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.6666666666666666,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
         "context_tokens": 294,
+        "repository_source_tokens": 198,
+        "tokens_saved": -96,
+        "token_reduction_fraction": -0.48484848484848486,
+        "selected_item_count": 3,
+        "selected_file_count": 2,
         "tokens_per_relevant_file": 173.88888888888889,
-        "retrieval_latency_ms": 10.177083332867673,
-        "peak_memory_mb": 0.12761751810709634,
+        "retrieval_latency_ms": 10.009096993599087,
+        "peak_memory_mb": 0.1276706059773763,
         "graph_expansions": 0,
         "evidence_source_diversity": 2,
         "selected_context_relevance": 1.0
@@ -73,15 +3537,26 @@
       "metrics": {
         "file_recall_at_k": 0.7777777777777777,
         "file_precision_at_k": 0.5555555555555555,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 0.7777777777777777,
+        "package_file_precision": 1.0,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 0.6666666666666666,
         "symbol_recall_at_k": 0.6666666666666666,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.8230929086742522,
         "gold_line_coverage": 0.7162698412698413,
         "context_tokens": 285,
+        "repository_source_tokens": 198,
+        "tokens_saved": -87,
+        "token_reduction_fraction": -0.4377104377104377,
+        "selected_item_count": 3,
+        "selected_file_count": 2,
         "tokens_per_relevant_file": 219.7777777777778,
-        "retrieval_latency_ms": 8.988472322622934,
-        "peak_memory_mb": 0.12084039052327473,
+        "retrieval_latency_ms": 9.053861004455635,
+        "peak_memory_mb": 0.12094720204671223,
         "graph_expansions": 0,
         "evidence_source_diversity": 1,
         "selected_context_relevance": 1.0
@@ -94,15 +3569,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 263,
-        "tokens_per_relevant_file": 158.05555555555557,
-        "retrieval_latency_ms": 27.487250335980207,
-        "peak_memory_mb": 0.19111315409342447,
+        "context_tokens": 619,
+        "repository_source_tokens": 198,
+        "tokens_saved": -421,
+        "token_reduction_fraction": -2.1245791245791246,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 409.3888888888889,
+        "retrieval_latency_ms": 27.88481933142369,
+        "peak_memory_mb": 0.19074598948160806,
         "graph_expansions": 0,
         "evidence_source_diversity": 3,
         "selected_context_relevance": 0.7777777777777777
@@ -115,14 +3601,25 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 275,
-        "tokens_per_relevant_file": 166.22222222222223,
-        "retrieval_latency_ms": 81.45379199413583,
+        "context_tokens": 655,
+        "repository_source_tokens": 198,
+        "tokens_saved": -457,
+        "token_reduction_fraction": -2.3097643097643097,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 433.3333333333333,
+        "retrieval_latency_ms": 77.33030568730707,
         "peak_memory_mb": 0.3453391393025716,
         "graph_expansions": 9,
         "evidence_source_diversity": 5,
@@ -136,15 +3633,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 275,
-        "tokens_per_relevant_file": 166.22222222222223,
-        "retrieval_latency_ms": 94.31813866831362,
-        "peak_memory_mb": 0.34423351287841797,
+        "context_tokens": 655,
+        "repository_source_tokens": 198,
+        "tokens_saved": -457,
+        "token_reduction_fraction": -2.3097643097643097,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 433.3333333333333,
+        "retrieval_latency_ms": 85.65365299970533,
+        "peak_memory_mb": 0.3442684809366862,
         "graph_expansions": 9,
         "evidence_source_diversity": 5,
         "selected_context_relevance": 0.7777777777777777
@@ -157,15 +3665,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.4146825396825397,
-        "context_tokens": 261,
-        "tokens_per_relevant_file": 158.33333333333334,
-        "retrieval_latency_ms": 105.00281965748097,
-        "peak_memory_mb": 0.3778378168741862,
+        "context_tokens": 885,
+        "repository_source_tokens": 198,
+        "tokens_saved": -687,
+        "token_reduction_fraction": -3.4696969696969693,
+        "selected_item_count": 9,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 529.2777777777777,
+        "retrieval_latency_ms": 103.21273631416261,
+        "peak_memory_mb": 0.3788674672444661,
         "graph_expansions": 6,
         "evidence_source_diversity": 6,
         "selected_context_relevance": 0.7777777777777777
@@ -178,15 +3697,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.583994708994709,
-        "context_tokens": 283,
-        "tokens_per_relevant_file": 176.88888888888889,
-        "retrieval_latency_ms": 101.75662501327072,
-        "peak_memory_mb": 0.3142051696777344,
+        "context_tokens": 716,
+        "repository_source_tokens": 198,
+        "tokens_saved": -518,
+        "token_reduction_fraction": -2.616161616161616,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 458.8888888888889,
+        "retrieval_latency_ms": 95.12012500393514,
+        "peak_memory_mb": 0.3143653869628906,
         "graph_expansions": 9,
         "evidence_source_diversity": 6,
         "selected_context_relevance": 0.7777777777777777
@@ -199,15 +3729,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.583994708994709,
-        "context_tokens": 275,
-        "tokens_per_relevant_file": 171.94444444444446,
-        "retrieval_latency_ms": 47.01754200505093,
-        "peak_memory_mb": 0.24749469757080078,
+        "context_tokens": 738,
+        "repository_source_tokens": 198,
+        "tokens_saved": -540,
+        "token_reduction_fraction": -2.727272727272728,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 466.8333333333333,
+        "retrieval_latency_ms": 46.65195833270749,
+        "peak_memory_mb": 0.24707635243733725,
         "graph_expansions": 0,
         "evidence_source_diversity": 5,
         "selected_context_relevance": 0.7777777777777777
@@ -220,15 +3761,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.583994708994709,
-        "context_tokens": 290,
-        "tokens_per_relevant_file": 181.33333333333334,
-        "retrieval_latency_ms": 94.46933333917211,
-        "peak_memory_mb": 0.34406375885009766,
+        "context_tokens": 784,
+        "repository_source_tokens": 198,
+        "tokens_saved": -586,
+        "token_reduction_fraction": -2.957912457912458,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 494.1666666666667,
+        "retrieval_latency_ms": 90.39644398338471,
+        "peak_memory_mb": 0.3441162109375,
         "graph_expansions": 9,
         "evidence_source_diversity": 7,
         "selected_context_relevance": 0.7777777777777777
@@ -241,15 +3793,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.583994708994709,
-        "context_tokens": 286,
-        "tokens_per_relevant_file": 178.88888888888889,
-        "retrieval_latency_ms": 99.88591633737087,
-        "peak_memory_mb": 0.3441680272420247,
+        "context_tokens": 780,
+        "repository_source_tokens": 198,
+        "tokens_saved": -582,
+        "token_reduction_fraction": -2.9377104377104377,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 491.72222222222223,
+        "retrieval_latency_ms": 93.65040300569187,
+        "peak_memory_mb": 0.34422047932942706,
         "graph_expansions": 9,
         "evidence_source_diversity": 6,
         "selected_context_relevance": 0.7777777777777777
@@ -262,15 +3825,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 279,
-        "tokens_per_relevant_file": 168.66666666666666,
-        "retrieval_latency_ms": 94.99731933465227,
-        "peak_memory_mb": 0.3441775639851888,
+        "context_tokens": 659,
+        "repository_source_tokens": 198,
+        "tokens_saved": -461,
+        "token_reduction_fraction": -2.32996632996633,
+        "selected_item_count": 7,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 435.77777777777777,
+        "retrieval_latency_ms": 88.56661101647963,
+        "peak_memory_mb": 0.34421253204345703,
         "graph_expansions": 9,
         "evidence_source_diversity": 6,
         "selected_context_relevance": 0.7777777777777777
@@ -283,15 +3857,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.583994708994709,
-        "context_tokens": 290,
-        "tokens_per_relevant_file": 181.33333333333334,
-        "retrieval_latency_ms": 101.13573567165683,
-        "peak_memory_mb": 0.3439118067423503,
+        "context_tokens": 784,
+        "repository_source_tokens": 198,
+        "tokens_saved": -586,
+        "token_reduction_fraction": -2.957912457912458,
+        "selected_item_count": 8,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 494.1666666666667,
+        "retrieval_latency_ms": 97.5565003269973,
+        "peak_memory_mb": 0.34394677480061847,
         "graph_expansions": 9,
         "evidence_source_diversity": 7,
         "selected_context_relevance": 0.7777777777777777
@@ -304,15 +3889,26 @@
       "metrics": {
         "file_recall_at_k": 0.8888888888888888,
         "file_precision_at_k": 0.6666666666666666,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.6666666666666666,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.611111111111111,
         "symbol_precision_at_k": 0.4444444444444444,
         "mrr": 1.0,
         "ndcg_at_k": 0.9217868789962073,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 340,
-        "tokens_per_relevant_file": 203.61111111111111,
-        "retrieval_latency_ms": 79.76980600506067,
-        "peak_memory_mb": 0.3441425959269206,
+        "context_tokens": 1144,
+        "repository_source_tokens": 198,
+        "tokens_saved": -946,
+        "token_reduction_fraction": -4.77946127946128,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 699.2777777777778,
+        "retrieval_latency_ms": 78.00993065272148,
+        "peak_memory_mb": 0.3442300160725911,
         "graph_expansions": 9,
         "evidence_source_diversity": 7,
         "selected_context_relevance": 0.8888888888888888
@@ -325,15 +3921,26 @@
       "metrics": {
         "file_recall_at_k": 0.7777777777777777,
         "file_precision_at_k": 0.5555555555555555,
+        "file_hit_at_k": 1.0,
+        "complete_file_recall_at_k": 0.3333333333333333,
+        "package_file_recall": 1.0,
+        "package_file_precision": 0.5833333333333334,
+        "package_file_hit": 1.0,
+        "package_complete_file_recall": 1.0,
         "symbol_recall_at_k": 0.7777777777777777,
         "symbol_precision_at_k": 0.5555555555555555,
         "mrr": 1.0,
         "ndcg_at_k": 0.8435737579924144,
         "gold_line_coverage": 0.6580687830687831,
-        "context_tokens": 314,
-        "tokens_per_relevant_file": 202.66666666666666,
-        "retrieval_latency_ms": 84.12859730500107,
-        "peak_memory_mb": 0.3520825703938802,
+        "context_tokens": 1144,
+        "repository_source_tokens": 198,
+        "tokens_saved": -946,
+        "token_reduction_fraction": -4.77946127946128,
+        "selected_item_count": 13,
+        "selected_file_count": 4,
+        "tokens_per_relevant_file": 763.0,
+        "retrieval_latency_ms": 82.10119401337579,
+        "peak_memory_mb": 0.352047602335612,
         "graph_expansions": 9,
         "evidence_source_diversity": 7,
         "selected_context_relevance": 0.8888888888888888

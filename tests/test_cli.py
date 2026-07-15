@@ -6,6 +6,7 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
+import contextforge.evaluation
 from contextforge.cli import app
 
 FIXTURE = Path(__file__).parent / "fixtures" / "sample_repo"
@@ -60,3 +61,40 @@ def test_cli_rejects_ambiguous_task_input(tmp_path: Path) -> None:
     result = runner.invoke(app, ["compile", str(repository), "--task", "x", "--task-file", "x"])
     assert result.exit_code != 0
     assert "exactly one" in result.output
+
+
+def test_cli_writes_historical_benchmark_output(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    manifest = tmp_path / "manifest.jsonl"
+    manifest.write_text("{}\n", encoding="utf-8")
+    output = tmp_path / "result.json"
+
+    class FakeRun:
+        def model_dump_json(self, *, indent: int) -> str:
+            assert indent == 2
+            return json.dumps({"task_count": 1}, indent=indent)
+
+    class FakeBenchmark:
+        def __init__(self, selected_manifest: Path) -> None:
+            assert selected_manifest == manifest
+
+        def run(self, workspace: Path, **options: object) -> FakeRun:
+            assert workspace == Path(".contextforge/test-history")
+            assert options["token_budget"] == 8000
+            return FakeRun()
+
+    monkeypatch.setattr(contextforge.evaluation, "HistoricalPatchBenchmark", FakeBenchmark)
+    result = runner.invoke(
+        app,
+        [
+            "evaluate-history",
+            "--manifest",
+            str(manifest),
+            "--workspace",
+            ".contextforge/test-history",
+            "--output",
+            str(output),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert json.loads(output.read_text(encoding="utf-8"))["task_count"] == 1

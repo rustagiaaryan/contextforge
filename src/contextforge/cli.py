@@ -173,6 +173,39 @@ def evaluate_repository_context(
         typer.echo(rendered)
 
 
+@app.command("evaluate-history")
+def evaluate_historical_patches(
+    manifest: Annotated[
+        Path,
+        typer.Option("--manifest", help="Pinned public historical-patch JSONL manifest."),
+    ],
+    workspace: Annotated[
+        Path,
+        typer.Option("--workspace", help="Cache and pre-fix snapshot directory."),
+    ] = Path(".contextforge/historical-benchmark"),
+    token_budget: Annotated[int, typer.Option("--token-budget", min=512)] = 8_000,
+    top_k: Annotated[int, typer.Option("--top-k", min=1, max=100)] = 10,
+    limit: Annotated[int | None, typer.Option("--limit", min=1)] = None,
+    output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
+) -> None:
+    """Evaluate pinned public fixes at their pre-fix commits (network opt-in)."""
+    from contextforge.evaluation import HistoricalPatchBenchmark
+
+    run = HistoricalPatchBenchmark(manifest).run(
+        workspace,
+        token_budget=token_budget,
+        top_k=top_k,
+        limit=limit,
+    )
+    rendered = run.model_dump_json(indent=2)
+    if output:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(rendered + "\n", encoding="utf-8")
+        console.print(f"[green]Wrote[/green] {output}")
+    else:
+        typer.echo(rendered)
+
+
 @app.command("dashboard")
 def serve_dashboard(
     repository: Annotated[Path, typer.Argument(help="Indexed local repository.")],

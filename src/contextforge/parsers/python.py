@@ -52,6 +52,24 @@ class _Extractor(ast.NodeVisitor):
     relations: list[RelationHint] = field(default_factory=list)
     scope: list[tuple[str, str, NodeType]] = field(default_factory=list)
     relation_keys: set[tuple[str, EdgeType, str]] = field(default_factory=set)
+    unit_id_counts: dict[str, int] = field(default_factory=dict)
+    source_bytes: bytes = field(init=False, repr=False)
+    line_byte_offsets: tuple[int, ...] = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self.source_bytes = self.source.encode("utf-8")
+        offsets = [0]
+        for line in self.source_bytes.splitlines(keepends=True):
+            offsets.append(offsets[-1] + len(line))
+        self.line_byte_offsets = tuple(offsets)
+
+    def _source_segment(self, node: ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef) -> str:
+        """Slice a symbol in O(symbol size) using AST UTF-8 byte offsets."""
+        if node.end_lineno is None or node.end_col_offset is None:
+            return ""
+        start = self.line_byte_offsets[node.lineno - 1] + node.col_offset
+        end = self.line_byte_offsets[node.end_lineno - 1] + node.end_col_offset
+        return self.source_bytes[start:end].decode("utf-8", errors="replace")
 
     def _parent(self) -> tuple[str, str, NodeType]:
         return self.scope[-1] if self.scope else (self.module_id, self.module_name, NodeType.MODULE)
@@ -90,8 +108,11 @@ class _Extractor(ast.NodeVisitor):
             node_type = (
                 NodeType.TEST if _is_test(self.relative_path, node.name) else NodeType.FUNCTION
             )
-        unit_id = SourceUnit.make_id(node_type, self.relative_path, qualname)
-        content = ast.get_source_segment(self.source, node) or ""
+        base_unit_id = SourceUnit.make_id(node_type, self.relative_path, qualname)
+        occurrence = self.unit_id_counts.get(base_unit_id, 0) + 1
+        self.unit_id_counts[base_unit_id] = occurrence
+        unit_id = base_unit_id if occurrence == 1 else f"{base_unit_id}#{occurrence}"
+        content = self._source_segment(node)
         unit = SourceUnit(
             unit_id=unit_id,
             node_type=node_type,

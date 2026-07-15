@@ -79,6 +79,18 @@ def test_git_memory_exposes_cochanges_and_hotspots(tmp_path: Path) -> None:
     assert history.hotspots()[0] in {("router.py", 2), ("test_router.py", 2)}
 
 
+def test_git_memory_skips_cochanges_for_broad_commits(tmp_path: Path) -> None:
+    repository = _repository(tmp_path)
+    database = Database(tmp_path / "index.sqlite3")
+    RepositoryIndexer(repository, database).index()
+    GraphBuilder(repository, database).build()
+
+    stats = GitHistoryIndexer(repository, database, max_cochange_files=1).index()
+
+    assert stats.changed_file_records > 0
+    assert stats.co_change_pairs == 0
+
+
 def test_git_memory_tracks_file_renames(tmp_path: Path) -> None:
     repository = _repository(tmp_path)
     _git(repository, "mv", "notes.py", "release_notes.py")

@@ -31,3 +31,39 @@ def test_test_function_is_typed_as_test() -> None:
     )
     assert test_unit.node_type is NodeType.TEST
     assert test_unit.is_test
+
+
+def test_parser_assigns_unique_ids_to_overloads(tmp_path: Path) -> None:
+    source = tmp_path / "overloads.py"
+    source.write_text(
+        "from typing import overload\n\n"
+        "@overload\n"
+        "def convert(value: str) -> str: ...\n\n"
+        "@overload\n"
+        "def convert(value: int) -> int: ...\n\n"
+        "def convert(value: str | int) -> str | int:\n"
+        "    return value\n",
+        encoding="utf-8",
+    )
+
+    result = PythonParser().parse(tmp_path, source)
+    overloads = [unit for unit in result.units if unit.qualname == "overloads.convert"]
+
+    assert len(overloads) == 3
+    assert len({unit.unit_id for unit in overloads}) == 3
+    assert overloads[0].unit_id.endswith(":overloads.convert")
+    assert overloads[2].unit_id.endswith(":overloads.convert#3")
+
+
+def test_parser_slices_unicode_source_with_ast_byte_offsets(tmp_path: Path) -> None:
+    source = tmp_path / "unicode.py"
+    source.write_text(
+        'def greeting():\n    message = "こんにちは"\n    return message\n',
+        encoding="utf-8",
+    )
+
+    result = PythonParser().parse(tmp_path, source)
+    function = next(unit for unit in result.units if unit.name == "greeting")
+
+    assert function.content.endswith("return message")
+    assert 'message = "こんにちは"' in function.content

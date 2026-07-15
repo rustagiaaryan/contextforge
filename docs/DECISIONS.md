@@ -47,3 +47,22 @@
 **Decision:** The local FastAPI dashboard consumes `EvidencePackage`, index-status, and graph APIs directly. It has no independent retrieval implementation or database schema.
 
 **Why:** A visualization that recomputes or mocks scores can diverge from CLI/MCP behavior. A thin read model makes the interface a debugging instrument for the actual compiler.
+
+## ADR-009: Historical patches are retrieval proxies, not patch-success labels
+
+**Decision:** Evaluate a task at the parent/base state of a pinned real fix and treat the Python
+files changed by that fix as gold retrieval evidence. Report package hit, file recall, complete
+recall, and token reduction, but never call them patch accuracy or developer productivity.
+
+**Why:** Historical fixes are public and auditable without paid models, and they test whether the
+compiler surfaces evidence developers actually touched. They cannot establish that an agent would
+produce a correct patch or that a human would finish faster, so those causal claims are rejected.
+
+## ADR-010: Broad commits do not create co-change edges
+
+**Decision:** Retain commit and changed-file history for every indexed commit, but infer pairwise
+co-change relationships only when a commit touches at most 50 files.
+
+**Why:** Mass migrations and generated-code sweeps do not mean hundreds of files are architecturally
+coupled. Pairing every file creates quadratic noise; one real Typer migration touched 578 files and
+would otherwise create more than 166,000 pairs from that commit alone.
