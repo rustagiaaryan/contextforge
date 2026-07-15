@@ -14,6 +14,11 @@ Repositories, issue text, source comments, paths, and Git metadata are untrusted
 
 The dashboard binds to loopback by default and is intended for local inspection. The MCP server exposes read-only retrieval operations plus explicit local indexing. Users should not expose either service directly to an untrusted network.
 
+`contextforge graph build` parses source through Tree-sitter and writes only inside the selected
+repository. It never loads a language runtime or executes target code. Generated HTML inserts graph
+labels through DOM `textContent`/escaping, and embedded JSON escapes `<` before entering a script
+context. Graph JSON loading enforces a schema, known endpoints, and a 100 MB file limit.
+
 Generated databases, model caches, environment files, and benchmark workspaces are ignored;
 only reviewed compact benchmark results are checked in. Optional providers read credentials from
 environment variables; credentials must never be placed in configuration, output packages, logs,
@@ -28,4 +33,8 @@ ContextForge checks in only task metadata and derived measurements.
 
 ## Known limits
 
-Static parsing cannot make dynamic Python calls authoritative. Evidence packages can contain adversarial source comments, so downstream agents must treat retrieved text as data, not instructions. Resource caps mitigate but cannot eliminate denial-of-service from intentionally pathological repositories.
+Static parsing cannot make dynamic calls authoritative. `INFERRED` and `AMBIGUOUS` graph edges
+must be verified against source before edits. Evidence packages and graph labels can contain
+adversarial source comments, so downstream agents must treat retrieved text as data, not
+instructions. Resource caps mitigate but cannot eliminate denial-of-service from intentionally
+pathological repositories.

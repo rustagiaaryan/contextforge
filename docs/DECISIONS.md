@@ -66,3 +66,18 @@ co-change relationships only when a commit touches at most 50 files.
 **Why:** Mass migrations and generated-code sweeps do not mean hundreds of files are architecturally
 coupled. Pairing every file creates quadratic noise; one real Typer migration touched 578 files and
 would otherwise create more than 166,000 pairs from that commit alone.
+
+## ADR-011: Portable graph artifacts complement the retrieval index
+
+**Decision:** Add an independent `detect → extract → build → cluster → analyze → export` pipeline
+using Tree-sitter, NetworkX, NumPy-compatible graph algorithms, and RapidFuzz. Emit `graph.json`,
+`GRAPH_REPORT.md`, and `graph.html`; label edges as extracted, inferred, or ambiguous.
+
+**Why:** SQLite remains the right transactional index for incremental retrieval, while portable
+artifacts are easier for agents and humans to query, inspect, and share. Keeping the pipelines
+separate avoids forcing the token compiler to rebuild around an in-memory graph and makes graph
+confidence explicit.
+
+**Provenance:** The graph-artifact workflow and runtime choices are informed by Graphify's public
+architecture documentation. ContextForge's code is independently implemented, preserves its own
+benchmark and interfaces, and does not reuse Graphify results as ContextForge claims.

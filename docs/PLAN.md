@@ -77,3 +77,13 @@ This is a living checklist. A checked box means implementation and proportionate
 - [x] Secret and path audit
 - [x] Release notes and initial tag
 - [x] Clean tree and synchronized remote
+
+## Phase 13 — graph-first multi-language workflow
+
+- [x] Tree-sitter discovery and shared extraction across 26 grammar entry points
+- [x] Plain extraction schema with extracted, inferred, and ambiguous confidence labels
+- [x] NetworkX resolution, community detection, centrality, and cross-community analysis
+- [x] Portable graph JSON, Markdown report, and standalone interactive HTML
+- [x] Fuzzy graph query, shortest-path, and node-explain CLI commands
+- [x] Validated project-scoped agent skill and installer
+- [x] Mixed Python/TypeScript/Go semantic fixture and all-grammar smoke test

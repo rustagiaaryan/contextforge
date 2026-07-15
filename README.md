@@ -6,7 +6,9 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-ContextForge is an adaptive repository-intelligence and context-engineering platform that combines hybrid retrieval, code knowledge graphs, Git-history memory, and token-budgeted evidence selection to help autonomous coding agents understand large codebases.
+ContextForge is a local repository-intelligence and context-engineering platform. It can map a
+multi-language codebase into a portable, queryable knowledge graph and compile task-specific
+source evidence under a strict token budget.
 
 Give it a repository, a software task, and a hard token budget. It returns ranked source ranges, symbols, relationships, tests, and relevant historical changes—with an audit trail for why every item was found, scored, selected, or rejected.
 
@@ -40,6 +42,9 @@ It is a real local engine—not a chatbot, UI mock, or mandatory cloud wrapper:
 
 - persistent SQLite/FTS5 repository index with content-hash invalidation;
 - Python AST extraction for files, modules, classes, functions, methods, tests, signatures, docs, imports, calls, inheritance, and references;
+- deterministic Tree-sitter graph extraction across 26 language/grammar modes and 44 extensions;
+- portable NetworkX graph artifacts with `EXTRACTED`, `INFERRED`, and `AMBIGUOUS` edges;
+- local graph clustering, architecture reports, fuzzy queries, shortest paths, and explanations;
 - typed repository/directory/file/module/class/function/method/test/commit graph;
 - field-weighted BM25, exact/fuzzy symbols, and deterministic local hash embeddings;
 - cached batched embeddings with a provider protocol and graceful semantic fallback;
@@ -49,6 +54,7 @@ It is a real local engine—not a chatbot, UI mock, or mandatory cloud wrapper:
 - deterministic routing, one bounded query-evolution pass, and an explainable reranker;
 - submodular-style context selection with source/file/test diversity and redundancy penalties;
 - Python API, CLI, eleven typed MCP tools, benchmark harness, and a live local dashboard;
+- an installable project-scoped agent skill that makes graph-first exploration repeatable;
 - no API key, model download, graph service, or target-code execution in the default path.
 
 ## Quick start
@@ -65,6 +71,20 @@ uv run contextforge compile tests/fixtures/sample_repo \
   --task "Requests through mounted applications lose their route prefix." \
   --token-budget 1600 --format markdown
 ```
+
+Map and query a multi-language repository without an API key:
+
+```bash
+uv run contextforge graph build tests/fixtures/multilang_repo --cluster networkx
+uv run contextforge graph query \
+  tests/fixtures/multilang_repo/contextforge-out/graph.json \
+  --question "How does mounted route resolution reach path joining?"
+uv run contextforge graph path \
+  tests/fixtures/multilang_repo/contextforge-out/graph.json Mount join_path
+```
+
+The build emits `graph.json`, `GRAPH_REPORT.md`, and a standalone interactive `graph.html`. See
+the [graph-first workflow](docs/GRAPH.md) for confidence semantics and supported languages.
 
 Launch the Repository Observatory:
 
@@ -103,6 +123,16 @@ contextforge status ./repository
 # Hybrid ranked search
 contextforge search ./repository \
   --task "mounted route prefix regression" --limit 20
+
+# Portable graph artifacts and graph-native exploration
+contextforge graph build ./repository
+contextforge graph query ./repository/contextforge-out/graph.json \
+  --question "Where is request validation connected to routing?"
+contextforge graph path ./repository/contextforge-out/graph.json Router RequestHandler
+contextforge graph explain ./repository/contextforge-out/graph.json Router
+
+# Install the project-scoped agent workflow
+contextforge skill install ./repository
 
 # Strict-budget package from an issue file
 contextforge compile ./repository \
@@ -169,13 +199,13 @@ The package also contains its route, initial anchors, one-pass query evolution, 
 
 | Layer | Implementation |
 | --- | --- |
-| Parsing | Ignore-aware traversal; Python AST and source ranges behind a parser protocol |
+| Parsing | High-fidelity Python AST index plus deterministic multi-language Tree-sitter graph extraction |
 | Persistence | Repository-local SQLite, FTS5, WAL, atomic per-file replacement, schema migration |
-| Graph | Typed confidence-weighted nodes/edges; cached bounded adjacency queries |
+| Graph | SQLite retrieval graph plus portable NetworkX artifacts, confidence labels, and communities |
 | Retrieval | BM25, fuzzy symbols, local embeddings, graph, tests, Git, hotspots |
 | Control | Deterministic router, one-pass query evolution, weighted reranker |
 | Selection | Token-aware marginal utility with coverage, connectivity, test, and redundancy signals |
-| Interfaces | Python, Typer CLI, FastMCP stdio server, FastAPI dashboard |
+| Interfaces | Python, Typer CLI, FastMCP, FastAPI dashboard, JSON/HTML graph artifacts, agent skill |
 | Evaluation | Seven configurations, eight ablations, ranking/coverage/cost/latency/memory metrics |
 
 The graph supplements search rather than replacing it. Dynamic Python relationships remain confidence-weighted best-effort facts, never authoritative static analysis. Read the full [architecture](docs/ARCHITECTURE.md) and [decision records](docs/DECISIONS.md).
@@ -278,7 +308,13 @@ Retrieved comments can still contain prompt injection; downstream agents must tr
 
 ## Limitations
 
-- Python is the only first-class parser. Interfaces are ready for additional languages, but no Tree-sitter adapters ship yet.
+- Python remains the high-fidelity retrieval parser. The portable graph pipeline loads 26
+  Tree-sitter grammars through a shared extractor; relationship fidelity varies by language, and
+  semantic fixtures currently cover Python, TypeScript, and Go.
+- Portable graph artifacts are rebuilt rather than incrementally patched. The SQLite Python index
+  remains incremental.
+- Leiden clustering is optional; the default installation falls back to deterministic NetworkX
+  modularity clustering.
 - Call/reference resolution is best-effort for dynamic Python; there is no control-flow or data-flow slice in v0.1.
 - The default embedding provider is deterministic feature hashing, not a trained semantic model.
 - The real benchmark is a curated 12-task retrieval proxy, not an untouched or representative
@@ -289,7 +325,7 @@ Retrieved comments can still contain prompt injection; downstream agents must tr
 
 ## Roadmap
 
-1. Tree-sitter language adapters and Python definition-use/data-flow slicing.
+1. Language-specialized Tree-sitter queries and Python definition-use/data-flow slicing.
 2. Opt-in trained local embeddings, cross-encoder reranking, and a larger untouched holdout suite.
 3. Native ContextBench subset adapter and larger multi-repository evaluation.
 4. Incremental graph/history rebuilding and approximate nearest-neighbor search.
@@ -297,7 +333,7 @@ Retrieved comments can still contain prompt injection; downstream agents must tr
 
 ## Research inspirations
 
-ContextForge is informed by [RepoCoder's iterative repository retrieval](https://arxiv.org/abs/2303.12570), [ContextBench's process-oriented context metrics](https://arxiv.org/abs/2602.05892), [SWE-bench's repository issue formulation](https://arxiv.org/abs/2310.06770), [CodeSearchNet's semantic code-search evaluation](https://arxiv.org/abs/1909.09436), [CodeRAG's anchor-to-graph framing](https://arxiv.org/abs/2504.10046), and [maximal marginal relevance](https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf). These links describe external work; the results above are ContextForge's own checked-in measurements.
+ContextForge is informed by [RepoCoder's iterative repository retrieval](https://arxiv.org/abs/2303.12570), [ContextBench's process-oriented context metrics](https://arxiv.org/abs/2602.05892), [SWE-bench's repository issue formulation](https://arxiv.org/abs/2310.06770), [CodeSearchNet's semantic code-search evaluation](https://arxiv.org/abs/1909.09436), [CodeRAG's anchor-to-graph framing](https://arxiv.org/abs/2504.10046), [maximal marginal relevance](https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf), and [Graphify's public graph-artifact workflow](https://github.com/Graphify-Labs/graphify). ContextForge's implementation and benchmark are independent; no Graphify source or benchmark result is presented as ContextForge work.
 
 ## Development
 
