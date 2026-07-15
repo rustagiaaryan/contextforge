@@ -17,6 +17,13 @@ app = typer.Typer(
     no_args_is_help=True,
     pretty_exceptions_show_locals=False,
 )
+graph_app = typer.Typer(
+    help="Build and query portable, Tree-sitter repository knowledge graphs.",
+    no_args_is_help=True,
+)
+skill_app = typer.Typer(help="Install ContextForge agent integrations.", no_args_is_help=True)
+app.add_typer(graph_app, name="graph")
+app.add_typer(skill_app, name="skill")
 console = Console()
 
 
@@ -101,6 +108,110 @@ def search_repository(
             " ".join(candidate.reasons[:2]),
         )
     console.print(table)
+
+
+@graph_app.command("build")
+def build_repository_graph(
+    repository: Annotated[Path, typer.Argument(help="Local repository to map.")],
+    output: Annotated[
+        Path | None,
+        typer.Option("--output", "-o", help="Output directory inside the repository."),
+    ] = None,
+    workers: Annotated[int, typer.Option("--workers", min=0, max=32)] = 0,
+    cluster_backend: Annotated[
+        str,
+        typer.Option("--cluster", help="Community backend: auto, leiden, or networkx."),
+    ] = "auto",
+    json_output: Annotated[bool, typer.Option("--json")] = False,
+) -> None:
+    """Run detect, Tree-sitter extraction, graph build, clustering, and export."""
+    from contextforge.codegraph import map_repository
+
+    result = map_repository(
+        repository,
+        output_dir=output,
+        workers=workers,
+        cluster_backend=cluster_backend,
+    )
+    if json_output:
+        typer.echo(json.dumps(result.to_dict(), indent=2, default=str))
+        return
+    console.print(
+        f"[green]Mapped[/green] {result.files} files across "
+        f"{', '.join(result.languages) or 'no languages'} into {result.nodes} nodes, "
+        f"{result.edges} relationships, and {result.communities} communities."
+    )
+    console.print(f"Graph: [cyan]{result.graph_json}[/cyan]")
+    console.print(f"Report: [cyan]{result.report_markdown}[/cyan]")
+    console.print(f"Interactive view: [cyan]{result.graph_html}[/cyan]")
+    if result.parse_warnings:
+        console.print(
+            f"[yellow]{len(result.parse_warnings)} parse warnings were recorded.[/yellow]"
+        )
+
+
+@graph_app.command("query")
+def query_repository_graph(
+    graph_file: Annotated[Path, typer.Argument(help="Generated graph.json artifact.")],
+    question: Annotated[str, typer.Option("--question", "-q")],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=200)] = 25,
+    hops: Annotated[int, typer.Option("--hops", min=0, max=3)] = 1,
+) -> None:
+    """Return a fuzzy-anchor, bounded subgraph for a natural-language question."""
+    from contextforge.codegraph import load_graph, query_graph
+
+    result = query_graph(load_graph(graph_file), question, limit=limit, hops=hops)
+    typer.echo(json.dumps(result, indent=2))
+
+
+@graph_app.command("path")
+def trace_repository_graph_path(
+    graph_file: Annotated[Path, typer.Argument(help="Generated graph.json artifact.")],
+    source: Annotated[str, typer.Argument(help="Source node id, label, or qualified name.")],
+    target: Annotated[str, typer.Argument(help="Target node id, label, or qualified name.")],
+    json_output: Annotated[bool, typer.Option("--json")] = False,
+) -> None:
+    """Trace the shortest relationship path between two fuzzy-resolved concepts."""
+    from contextforge.codegraph import load_graph, shortest_path
+
+    result = shortest_path(load_graph(graph_file), source, target)
+    if json_output:
+        typer.echo(json.dumps(result, indent=2))
+        return
+    console.print(
+        f"[bold]{result['source']['label']}[/bold] → "
+        f"[bold]{result['target']['label']}[/bold] ({result['hops']} hops)"
+    )
+    for step in result["steps"]:
+        arrow = "--" if step["direction"] == "outgoing" else "<--"
+        console.print(
+            f"  {step['source']} {arrow}{step['relation']}--> {step['target']} "
+            f"[{step['confidence']}]"
+        )
+
+
+@graph_app.command("explain")
+def explain_repository_graph_node(
+    graph_file: Annotated[Path, typer.Argument(help="Generated graph.json artifact.")],
+    node: Annotated[str, typer.Argument(help="Node id, label, or qualified name.")],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=100)] = 30,
+) -> None:
+    """Explain a concept and its strongest confidence-tagged relationships."""
+    from contextforge.codegraph import explain_node, load_graph
+
+    typer.echo(json.dumps(explain_node(load_graph(graph_file), node, limit=limit), indent=2))
+
+
+@skill_app.command("install")
+def install_agent_skill(
+    repository: Annotated[Path, typer.Argument(help="Repository receiving the project skill.")],
+    overwrite: Annotated[bool, typer.Option("--overwrite")] = False,
+) -> None:
+    """Install the ContextForge graph skill under the repository's .agents directory."""
+    from contextforge.skill_install import install_graph_skill
+
+    target = install_graph_skill(repository, overwrite=overwrite)
+    console.print(f"[green]Installed[/green] ContextForge graph skill at [cyan]{target}[/cyan]")
 
 
 @app.command("compile")

@@ -1,0 +1,4 @@
+interface:
+  display_name: "ContextForge Graph"
+  short_description: "Map and query repository knowledge graphs"
+  default_prompt: "Use $contextforge-graph to map this repository and answer my codebase question from the generated graph."
