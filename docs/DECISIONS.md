@@ -70,7 +70,7 @@ would otherwise create more than 166,000 pairs from that commit alone.
 ## ADR-011: Portable graph artifacts complement the retrieval index
 
 **Decision:** Add an independent `detect → extract → build → cluster → analyze → export` pipeline
-using Tree-sitter, NetworkX, NumPy-compatible graph algorithms, and RapidFuzz. Emit `graph.json`,
+using Tree-sitter, NetworkX graph algorithms, and RapidFuzz. Emit `graph.json`,
 `GRAPH_REPORT.md`, and `graph.html`; label edges as extracted, inferred, or ambiguous.
 
 **Why:** SQLite remains the right transactional index for incremental retrieval, while portable

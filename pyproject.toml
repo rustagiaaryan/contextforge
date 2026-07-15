@@ -23,8 +23,6 @@ dependencies = [
   "fastapi>=0.116,<1",
   "mcp>=1.10,<2",
   "networkx>=3.4,<4",
-  "numpy>=1.26,<3; python_version < '3.13'",
-  "numpy>=2,<3; python_version >= '3.13'",
   "pathspec>=0.12,<1",
   "pydantic>=2.11,<3",
   "rapidfuzz>=3,<4",
@@ -67,7 +65,6 @@ dev = [
   "pytest>=9.0.3,<10",
   "pytest-cov>=6.2,<7",
   "ruff>=0.12,<1",
-  "types-networkx>=3.4,<4",
 ]
 leiden = [
   "graspologic>=3.4,<4; python_version < '3.13'",
@@ -103,3 +100,8 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 packages = ["contextforge"]
+
+[[tool.mypy.overrides]]
+module = ["networkx", "networkx.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

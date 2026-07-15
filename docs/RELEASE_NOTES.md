@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Added a graph-first `detect → extract → build → cluster → analyze → export` workflow using
-  Tree-sitter, NetworkX, NumPy, and RapidFuzz.
+  Tree-sitter, NetworkX, and RapidFuzz.
 - Added confidence-tagged portable `graph.json`, `GRAPH_REPORT.md`, and interactive `graph.html`
   artifacts plus graph query, path, and explain commands.
 - Added 26 grammar entry points, mixed Python/TypeScript/Go semantic fixtures, and a validated
