@@ -13,6 +13,7 @@ build/
 
 # ContextForge runtime state and caches
 .contextforge/
+contextforge-out/
 *.contextforge.db
 *.sqlite
 *.sqlite3
@@ -31,4 +32,3 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
-
