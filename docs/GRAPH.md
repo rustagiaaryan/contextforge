@@ -83,9 +83,3 @@ contextforge skill install ./repository
 This writes `.agents/skills/contextforge-graph/SKILL.md` and its UI metadata. The skill directs an
 agent to build or refresh the artifact, issue scoped graph queries, inspect referenced source, and
 interpret confidence labels conservatively.
-
-## Design provenance
-
-This interface is informed by Graphify's publicly documented graph-first pipeline and runtime
-choices. ContextForge's implementation is independently written, keeps its existing retrieval and
-evaluation systems, and does not claim Graphify's code or benchmark results.

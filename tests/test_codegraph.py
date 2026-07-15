@@ -130,7 +130,14 @@ def test_pipeline_exports_real_queryable_artifacts(tmp_path: Path) -> None:
     assert result.communities > 0
     assert result.graph_json.is_file()
     assert "Central concepts" in result.report_markdown.read_text(encoding="utf-8")
-    assert "Interactive repository graph" in result.graph_html.read_text(encoding="utf-8")
+    html = result.graph_html.read_text(encoding="utf-8")
+    assert "Interactive repository graph" in html
+    assert 'id="search"' in html
+    assert 'id="community"' in html
+    assert "addEventListener('click'" in html
+    assert "addEventListener('input',applyFilter)" in html
+    assert "addEventListener('wheel'" in html
+    assert "addEventListener('pointermove'" in html
 
     payload = json.loads(result.graph_json.read_text(encoding="utf-8"))
     assert payload["generator"] == "ContextForge"
