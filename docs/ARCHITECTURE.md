@@ -19,6 +19,9 @@ artifacts, and the agent skill are adapters over explicit pipelines.
 9. **Adapters** expose evidence through Python, JSON/Markdown, CLI, MCP, and a read-only local dashboard.
 10. **Graph-artifact pipeline** uses Tree-sitter extraction, NetworkX resolution and clustering,
     deterministic analysis, and JSON/Markdown/HTML exports for graph-first exploration.
+11. **Impact analysis** maps exact symbols or zero-context Git diff ranges to graph seeds, walks
+    upstream dependency edges, separates related tests, and reports strongest paths under strict
+    depth and result limits.
 
 ## Data flow
 
@@ -29,6 +32,9 @@ task -> route -> retrieve anchors -> bounded graph/test/history expansion
 
 repository -> detect -> Tree-sitter extract -> NetworkX build -> cluster -> analyze
            -> graph.json + GRAPH_REPORT.md + graph.html -> query/path/explain
+
+symbol or Git diff -> exact indexed seeds -> bounded upstream traversal -> related tests
+                   -> explainable risk + JSON/CLI/MCP report
 ```
 
 Every selected item retains its file, symbol, source range, content hash, score, retrieval provenance, explanation, and a stable pointer to the full source unit.
@@ -47,6 +53,7 @@ src/contextforge/
   reranking/     candidate score fusion
   optimization/  strict token-budget selection
   context/       package assembly and rendering
+  impact/        symbol resolution, Git change mapping, and upstream blast-radius reports
   storage/       SQLite schema and repositories
   evaluation/    metrics, baselines, and ablations
   mcp/           Model Context Protocol adapter

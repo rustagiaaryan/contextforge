@@ -10,8 +10,13 @@ uv run contextforge index tests/fixtures/sample_repo
 uv run contextforge compile tests/fixtures/sample_repo \
   --task "Requests through mounted applications lose their route prefix." \
   --token-budget 1600 --format markdown
+uv run contextforge impact tests/fixtures/sample_repo \
+  --symbol app.utils.join_path --depth 3
 uv run contextforge dashboard tests/fixtures/sample_repo --open
 ```
+
+The impact command should identify `Mount.resolve`, the transitive `dispatch` caller, and
+`test_mounted_prefix_is_preserved`, with the relationship path and risk reasons shown explicitly.
 
 Open `http://127.0.0.1:8765` if the browser does not open automatically. Submit the prefilled task to inspect:
 

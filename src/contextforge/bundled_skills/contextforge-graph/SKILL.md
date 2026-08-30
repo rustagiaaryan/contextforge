@@ -62,3 +62,21 @@ Interpret confidence labels precisely:
 - `AMBIGUOUS`: several targets remain plausible; inspect each candidate.
 
 Use graph results as navigation evidence, not as proof that a relationship is semantically correct.
+
+## Check impact before cross-file edits
+
+Before changing a shared symbol, inspect its bounded upstream dependents and validation code:
+
+```bash
+contextforge impact . --symbol package.module.Symbol --depth 3
+```
+
+After editing, review the combined impact of committed and working-tree changes:
+
+```bash
+contextforge changes .
+contextforge changes . --base main
+```
+
+Use the reported paths and related tests to guide verification. Impact analysis is static and may
+miss dynamic dispatch, runtime imports, and unresolved cross-language relationships.

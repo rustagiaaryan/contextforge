@@ -27,7 +27,8 @@ interactive HTML · JSON · Markdown · MCP tools
 - Generates a standalone interactive graph with search, filters, node details, pan, and zoom
 - Answers graph queries, explains components, and traces paths between symbols
 - Compiles task-specific code, tests, and Git evidence under a requested token budget
-- Exposes 11 typed tools through a local MCP server
+- Traces the likely blast radius of a symbol or current Git changes with explainable paths
+- Exposes 13 typed tools through a local MCP server
 - Runs locally without an API key, model download, vector database, or external graph service
 
 ## Quick start
@@ -82,6 +83,19 @@ contextforge graph path \
 
 Graph queries use fuzzy symbol anchors followed by bounded structural expansion. They are deterministic and do not require an LLM.
 
+## Check the blast radius
+
+See which callers, dependents, and tests may be affected before changing a shared symbol:
+
+```bash
+contextforge impact ./repository --symbol app.routing.Mount.resolve
+contextforge changes ./repository --base main
+```
+
+Both commands return deterministic dependency paths, confidence values, and an explainable
+low/medium/high risk heuristic. Add `--json` for agents or scripts. This is bounded static analysis,
+so dynamic dispatch and unresolved cross-language calls may be missing.
+
 ## Compile context for an AI task
 
 The graph explorer shows the whole architecture. For a specific bug or feature, ContextForge can instead create a small, explainable evidence package:
@@ -125,9 +139,10 @@ index_repository       get_index_status       search_symbols
 search_code            get_symbol             get_callers
 get_callees            find_related_tests     search_git_history
 expand_graph_neighbors compile_task_context
+analyze_symbol_impact  analyze_change_impact
 ```
 
-Every tool accepts an explicit local repository path. The test suite launches the server as a subprocess, performs a real MCP handshake, discovers the schemas, and calls all 11 tools through stdio. See [docs/MCP.md](docs/MCP.md) for source-checkout configuration.
+Every tool accepts an explicit local repository path. The test suite launches the server as a subprocess, performs a real MCP handshake, discovers the schemas, and calls all 13 tools through stdio. See [docs/MCP.md](docs/MCP.md) for source-checkout configuration.
 
 ## How the graph is built
 

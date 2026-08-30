@@ -450,25 +450,25 @@ git push origin main
 - Documents the exact CLI/MCP commands and their static-analysis limits.
 - Keeps the packaged graph skill aligned with the public tool surface.
 
-- [ ] **Step 1: Add a package/documentation contract test**
+- [x] **Step 1: Add a package/documentation contract test**
 
 Assert the installed wheel includes the impact package and bundled skill, and that README command
 examples use existing command names. Keep the test behavioral: import `ImpactAnalyzer`, invoke CLI
 `--help`, and install the skill rather than searching prose implementation details.
 
-- [ ] **Step 2: Run the contract test and verify the bundled workflow is incomplete**
+- [x] **Step 2: Run the contract test and verify the bundled workflow is incomplete**
 
 Run: `uv run pytest tests/test_package.py -q`
 
 Expected: FAIL until the skill and public command expectations are updated.
 
-- [ ] **Step 3: Update concise public documentation**
+- [x] **Step 3: Update concise public documentation**
 
 Add one short "Check the blast radius" README section, update the architecture data flow, add a
 reproducible demo command, and teach the bundled skill to call impact analysis before recommending
 cross-file changes. Do not add unmeasured performance or correctness claims.
 
-- [ ] **Step 4: Run all local quality gates**
+- [x] **Step 4: Run all local quality gates**
 
 ```bash
 uv run ruff format --check .
@@ -480,7 +480,7 @@ uv build
 
 Expected: formatting clean, no lint/type errors, all tests pass, wheel and sdist build successfully.
 
-- [ ] **Step 5: Run end-to-end commands on the sample repository**
+- [x] **Step 5: Run end-to-end commands on the sample repository**
 
 ```bash
 uv run contextforge impact tests/fixtures/sample_repo \
@@ -491,12 +491,12 @@ uv run contextforge changes . --base HEAD~1 --json
 
 Expected: valid impact JSON, bounded results, explicit risk reasons, and no target-code execution.
 
-- [ ] **Step 6: Audit repository presentation**
+- [x] **Step 6: Audit repository presentation**
 
 Run scans for machine-specific paths, credentials, forbidden comparison names, generated indexes,
 and stale README commands. Confirm `git diff --check` succeeds.
 
-- [ ] **Step 7: Commit and push**
+- [x] **Step 7: Commit and push**
 
 ```bash
 git add README.md docs src/contextforge/bundled_skills tests/test_package.py
