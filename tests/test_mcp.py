@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -25,6 +26,8 @@ def test_mcp_registers_the_documented_tool_surface() -> None:
     names = {tool.name for tool in tools}
     assert names == {
         "compile_task_context",
+        "analyze_change_impact",
+        "analyze_symbol_impact",
         "expand_graph_neighbors",
         "find_related_tests",
         "get_callees",
@@ -60,6 +63,20 @@ def test_mcp_tools_index_fetch_symbols_and_compile(tmp_path: Path) -> None:
 
 def test_mcp_stdio_transport_serves_every_tool(tmp_path: Path) -> None:
     repository = _repository(tmp_path)
+    for arguments in (
+        ("init", "-b", "main"),
+        ("config", "user.email", "contextforge@example.invalid"),
+        ("config", "user.name", "ContextForge Tests"),
+        ("add", "."),
+        ("commit", "-m", "fixture"),
+    ):
+        subprocess.run(
+            ["git", *arguments],
+            cwd=repository,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
     asyncio.run(_exercise_stdio_server(repository))
 
 
@@ -123,6 +140,23 @@ async def _exercise_stdio_server(repository: Path) -> None:
                 "output_format": "json",
             },
         ),
+        (
+            "analyze_symbol_impact",
+            {
+                "repository": str(repository),
+                "identifier": "app.utils.join_path",
+                "max_depth": 3,
+                "limit": 50,
+            },
+        ),
+        (
+            "analyze_change_impact",
+            {
+                "repository": str(repository),
+                "max_depth": 3,
+                "limit": 50,
+            },
+        ),
     ]
     server = StdioServerParameters(
         command=sys.executable,
@@ -144,3 +178,6 @@ async def _exercise_stdio_server(repository: Path) -> None:
                 payload = json.loads(result.content[0].text)
                 assert payload["estimated_tokens"] <= 1_200
                 assert payload["items"]
+            elif name in {"analyze_symbol_impact", "analyze_change_impact"}:
+                payload = json.loads(result.content[0].text)
+                assert {"risk_level", "seeds", "impacted"} <= payload.keys()

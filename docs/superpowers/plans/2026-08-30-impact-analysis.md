@@ -399,35 +399,35 @@ git push origin main
 - Produces: `analyze_symbol_impact(repository, identifier, max_depth=3, limit=200)`.
 - Produces: `analyze_change_impact(repository, base=None, max_depth=3, limit=200)`.
 
-- [ ] **Step 1: Extend the MCP surface test first**
+- [x] **Step 1: Extend the MCP surface test first**
 
 Add both tool names to the exact registered-tool set and real stdio call list. Assert returned
 structured content includes `risk_level`, `seeds`, and `impacted`.
 
-- [ ] **Step 2: Run MCP tests and verify discovery failure**
+- [x] **Step 2: Run MCP tests and verify discovery failure**
 
 Run: `uv run pytest tests/test_mcp.py -q`
 
 Expected: FAIL because the two tools are not registered.
 
-- [ ] **Step 3: Implement thin typed MCP adapters**
+- [x] **Step 3: Implement thin typed MCP adapters**
 
 Clamp depth/limit to approved bounds, call the engine methods, and return
 `report.model_dump(mode="json")`. Tool docstrings must describe upstream impact, static-analysis
 limits, and whether the call reads Git state.
 
-- [ ] **Step 4: Update MCP documentation**
+- [x] **Step 4: Update MCP documentation**
 
 Add both tools to the table with concise purposes and show one example prompt for pre-change impact
 and one for working-tree review.
 
-- [ ] **Step 5: Run the real stdio integration test**
+- [x] **Step 5: Run the real stdio integration test**
 
 Run: `uv run pytest tests/test_mcp.py -q`
 
 Expected: PASS with all 13 tools discovered and called through a subprocess session.
 
-- [ ] **Step 6: Commit and push**
+- [x] **Step 6: Commit and push**
 
 ```bash
 git add src/contextforge/mcp/server.py tests/test_mcp.py docs/MCP.md

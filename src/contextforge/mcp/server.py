@@ -175,3 +175,35 @@ def compile_task_context(
     bounded_budget = min(200_000, max(512, token_budget))
     package = _engine(repository).compile_context(task=task, token_budget=bounded_budget)
     return package.to_markdown() if output_format == "markdown" else package.to_json()
+
+
+@mcp.tool()
+def analyze_symbol_impact(
+    repository: str,
+    identifier: str,
+    max_depth: int = 3,
+    limit: int = 200,
+) -> dict[str, Any]:
+    """Trace bounded upstream static dependencies and related tests for one exact symbol."""
+    report = _engine(repository).analyze_impact(
+        identifier,
+        max_depth=min(3, max(1, max_depth)),
+        limit=min(200, max(1, limit)),
+    )
+    return report.model_dump(mode="json")
+
+
+@mcp.tool()
+def analyze_change_impact(
+    repository: str,
+    base: str | None = None,
+    max_depth: int = 3,
+    limit: int = 200,
+) -> dict[str, Any]:
+    """Read local Git state and trace bounded static dependents of changed indexed symbols."""
+    report = _engine(repository).analyze_changes(
+        base=base,
+        max_depth=min(3, max(1, max_depth)),
+        limit=min(200, max(1, limit)),
+    )
+    return report.model_dump(mode="json")

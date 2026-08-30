@@ -16,6 +16,18 @@ ContextForge exposes the same persistent index and compiler used by the Python A
 | `search_git_history` | Retrieve confidence-gated historical changes |
 | `expand_graph_neighbors` | Perform capped, edge-filtered structural expansion |
 | `compile_task_context` | Compile the strict-budget JSON or Markdown evidence package |
+| `analyze_symbol_impact` | Trace upstream dependents and related tests before changing a symbol |
+| `analyze_change_impact` | Map Git changes to symbols and summarize their combined blast radius |
+
+Example agent requests:
+
+- “Before editing `app.utils.join_path`, use `analyze_symbol_impact` to show its callers, related
+  tests, and strongest dependency paths.”
+- “Use `analyze_change_impact` to review my working tree and identify affected code that may need
+  validation.”
+
+Impact results are bounded static-analysis evidence, not a guarantee of runtime behavior. Dynamic
+dispatch and unresolved cross-language calls may be absent.
 
 ## Client configuration
 
@@ -39,4 +51,3 @@ From a source checkout, add a stdio server entry to a compatible coding client. 
 ```
 
 Installed packages can use `"command": "contextforge", "args": ["mcp"]`. Each tool accepts an explicit repository path, so one server can work with multiple local repositories. Indexing only writes the ignored `.contextforge/` database beneath the selected repository.
-
