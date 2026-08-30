@@ -1,6 +1,7 @@
 """Explainable symbol and change impact analysis."""
 
 from contextforge.impact.analyzer import ImpactAnalyzer
+from contextforge.impact.git_changes import ChangedRange, GitChangeReader
 from contextforge.impact.models import (
     ImpactedSymbol,
     ImpactReport,
@@ -10,6 +11,8 @@ from contextforge.impact.models import (
 )
 
 __all__ = [
+    "ChangedRange",
+    "GitChangeReader",
     "ImpactAnalyzer",
     "ImpactReport",
     "ImpactSeed",

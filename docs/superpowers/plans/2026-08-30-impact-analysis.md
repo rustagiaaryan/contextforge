@@ -258,7 +258,7 @@ Run: `uv run pytest tests/test_impact_analyzer.py tests/test_graph.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 9: Commit and push**
+- [x] **Step 9: Commit and push**
 
 ```bash
 git add src/contextforge/impact tests/test_impact_analyzer.py
@@ -280,49 +280,49 @@ git push origin main
 - Produces: `GitChangeReader(repository).read(base: str | None = None) -> tuple[ChangedRange, ...]`.
 - Produces: `ImpactAnalyzer.analyze_changes(*, base=None, max_depth=3, limit=200) -> ImpactReport`.
 
-- [ ] **Step 1: Write a failing zero-context diff parser test**
+- [x] **Step 1: Write a failing zero-context diff parser test**
 
 Provide unified diff text containing modified, added, deleted, and renamed files. Assert parsed new-
 side line ranges, status values, and `old_path` for renames. Deleted files have line range `0..0`.
 
-- [ ] **Step 2: Verify the parser test fails because the module is missing**
+- [x] **Step 2: Verify the parser test fails because the module is missing**
 
 Run: `uv run pytest tests/test_change_impact.py::test_parse_diff_tracks_ranges_and_renames -q`
 
 Expected: FAIL importing `GitChangeReader`.
 
-- [ ] **Step 3: Implement the bounded Git reader**
+- [x] **Step 3: Implement the bounded Git reader**
 
 Set `GIT_TERMINAL_PROMPT=0`, `GIT_OPTIONAL_LOCKS=0`, and run with `check=True`, `capture_output=True`,
-`text=True`, `timeout=30`. For no base run `git diff --relative=. --unified=0 --find-renames HEAD --`.
+`text=True`, `timeout=30`. For no base run `git diff --relative --unified=0 --find-renames HEAD --`.
 For a base combine `git diff BASE...HEAD` with `git diff HEAD`. Add untracked files from
 `git ls-files --others --exclude-standard -z` as full-file ranges. Deduplicate exact ranges.
 
-- [ ] **Step 4: Add failing real-repository mapping tests**
+- [x] **Step 4: Add failing real-repository mapping tests**
 
 Create a Git fixture with committed routing code, then separately modify a function body, stage a
 test, add an untracked module, rename a file, delete a file, and compare a feature commit to `main`.
 Assert changed ranges map to the narrowest overlapping source unit and unresolved deleted paths are
 retained.
 
-- [ ] **Step 5: Implement range-to-unit mapping**
+- [x] **Step 5: Implement range-to-unit mapping**
 
 For each range, load units with the same path. Select overlapping non-file units sorted by smallest
 span, deepest parent chain, then stable ID. Fall back to the file unit. Combine unique seeds through
 `analyze_units`; deleted/unmapped paths go into `unresolved`.
 
-- [ ] **Step 6: Add invalid-repository and invalid-revision tests**
+- [x] **Step 6: Add invalid-repository and invalid-revision tests**
 
 Assert concise `ValueError` messages include `not a Git repository` and `invalid Git revision`
 without leaking full subprocess environment or stack traces through CLI adapters.
 
-- [ ] **Step 7: Run Git impact tests**
+- [x] **Step 7: Run Git impact tests**
 
 Run: `uv run pytest tests/test_change_impact.py tests/test_history.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 8: Commit and push**
+- [x] **Step 8: Commit and push**
 
 ```bash
 git add src/contextforge/impact tests/test_change_impact.py

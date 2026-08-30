@@ -8,6 +8,7 @@ from pathlib import Path
 
 from contextforge.graph import GraphQuery
 from contextforge.graph.models import GraphEdge
+from contextforge.impact.git_changes import ChangedRange, GitChangeReader
 from contextforge.impact.models import (
     ImpactedSymbol,
     ImpactReport,
@@ -52,6 +53,38 @@ class ImpactAnalyzer:
             mode="symbol",
             max_depth=max_depth,
             limit=limit,
+        )
+
+    def analyze_changes(
+        self,
+        *,
+        base: str | None = None,
+        max_depth: int = 3,
+        limit: int = 200,
+    ) -> ImpactReport:
+        """Map local or branch changes to indexed symbols and their dependents."""
+        changes = GitChangeReader(self.repository).read(base)
+        all_units = self.database.list_units()
+        units_by_path: dict[str, list[SourceUnit]] = {}
+        for unit in all_units:
+            units_by_path.setdefault(unit.path, []).append(unit)
+        mapped: dict[str, SourceUnit] = {}
+        unresolved: set[str] = set()
+        for change in changes:
+            mapped_unit = self._map_change(change, units_by_path.get(change.path, []))
+            if mapped_unit is None:
+                unresolved.add(change.path)
+            else:
+                mapped[mapped_unit.unit_id] = mapped_unit
+        target = f"changes since {base}" if base else "working tree changes"
+        return self.analyze_units(
+            mapped.values(),
+            target=target,
+            mode="changes",
+            max_depth=max_depth,
+            limit=limit,
+            unresolved=tuple(unresolved),
+            changed_files=tuple(change.path for change in changes),
         )
 
     def analyze_units(
@@ -136,6 +169,38 @@ class ImpactAnalyzer:
             raise ValueError(f"Unknown symbol: {identifier}")
         choices = ", ".join(sorted(unit.qualname for unit in matches)[:10])
         raise ValueError(f"Ambiguous symbol '{identifier}'; choose one of: {choices}")
+
+    @staticmethod
+    def _map_change(change: ChangedRange, units: list[SourceUnit]) -> SourceUnit | None:
+        if change.status == "deleted":
+            return None
+        by_id = {unit.unit_id: unit for unit in units}
+
+        def depth(unit: SourceUnit) -> int:
+            result = 0
+            parent_id = unit.parent_id
+            while parent_id and parent_id in by_id:
+                result += 1
+                parent_id = by_id[parent_id].parent_id
+            return result
+
+        overlapping = [
+            unit
+            for unit in units
+            if unit.node_type not in {NodeType.FILE, NodeType.MODULE}
+            and unit.start_line <= change.end_line
+            and unit.end_line >= change.start_line
+        ]
+        if overlapping:
+            return min(
+                overlapping,
+                key=lambda unit: (
+                    unit.end_line - unit.start_line,
+                    -depth(unit),
+                    unit.unit_id,
+                ),
+            )
+        return next((unit for unit in units if unit.node_type is NodeType.FILE), None)
 
     def _traverse(
         self,
