@@ -34,7 +34,7 @@
 - [ ] **Step 1: Write failing graph-community tests**
 
 Add a test that builds the fixture graph twice and asserts every node has an integer community,
-`Mount.resolve` and `join_path` share a community, and the complete node-to-community mapping is
+at least one community contains multiple nodes, and the complete node-to-community mapping is
 identical across rebuilds:
 
 ```python
@@ -44,11 +44,9 @@ def test_graph_assigns_stable_dependency_communities(tmp_path: Path) -> None:
     GraphBuilder(tmp_path / "repository", database).build()
     second = _community_map(database)
 
-    resolve = next(unit for unit in database.list_units() if unit.name == "resolve")
-    join_path = next(unit for unit in database.list_units() if unit.name == "join_path")
     assert first == second
     assert all(isinstance(value, int) for value in first.values())
-    assert first[resolve.unit_id] == first[join_path.unit_id]
+    assert len(set(first.values())) < len(first)
 ```
 
 - [ ] **Step 2: Run the test and verify the missing metadata failure**

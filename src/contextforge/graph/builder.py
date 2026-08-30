@@ -7,6 +7,8 @@ import sqlite3
 from collections import defaultdict
 from pathlib import Path, PurePosixPath
 
+import networkx as nx
+
 from contextforge.models import EdgeType, NodeType, SourceUnit
 from contextforge.storage import Database
 
@@ -148,6 +150,7 @@ class GraphBuilder:
                     float(link["confidence"]) * 0.9,
                     json.loads(str(link["metadata_json"])),
                 )
+            self._assign_communities(connection)
             node_count = int(connection.execute("SELECT COUNT(*) FROM graph_nodes").fetchone()[0])
             edge_count = int(connection.execute("SELECT COUNT(*) FROM graph_edges").fetchone()[0])
         return node_count, edge_count
@@ -206,6 +209,60 @@ class GraphBuilder:
             if len(modules) == 1:
                 return modules[0].unit_id, 0.8
         return None, 0.0
+
+    @staticmethod
+    def _assign_communities(connection: sqlite3.Connection) -> None:
+        """Persist deterministic weighted communities on every graph node."""
+        node_rows = connection.execute(
+            "SELECT node_id, metadata_json FROM graph_nodes ORDER BY node_id"
+        ).fetchall()
+        dependency_graph = nx.Graph()
+        dependency_graph.add_nodes_from(str(row["node_id"]) for row in node_rows)
+        edge_rows = connection.execute(
+            """
+            SELECT source_id, target_id, confidence
+            FROM graph_edges
+            WHERE edge_type != ?
+            ORDER BY source_id, target_id, edge_type
+            """,
+            (EdgeType.CONTAINS.value,),
+        ).fetchall()
+        for row in edge_rows:
+            source = str(row["source_id"])
+            target = str(row["target_id"])
+            if source == target:
+                continue
+            previous = float(dependency_graph.get_edge_data(source, target, {}).get("weight", 0.0))
+            dependency_graph.add_edge(
+                source,
+                target,
+                weight=previous + float(row["confidence"]),
+            )
+        if dependency_graph.number_of_edges():
+            groups = [
+                set(group)
+                for group in nx.community.greedy_modularity_communities(
+                    dependency_graph,
+                    weight="weight",
+                    resolution=1.0,
+                )
+            ]
+        else:
+            groups = [{str(node_id)} for node_id in dependency_graph.nodes]
+        groups.sort(key=lambda group: (-len(group), min(group, default="")))
+        communities = {
+            node_id: community_id
+            for community_id, group in enumerate(groups)
+            for node_id in sorted(group)
+        }
+        for row in node_rows:
+            node_id = str(row["node_id"])
+            metadata = json.loads(str(row["metadata_json"]))
+            metadata["community"] = communities[node_id]
+            connection.execute(
+                "UPDATE graph_nodes SET metadata_json = ? WHERE node_id = ?",
+                (json.dumps(metadata, sort_keys=True), node_id),
+            )
 
     @staticmethod
     def _insert_edge(
