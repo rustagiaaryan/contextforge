@@ -6,8 +6,10 @@ Add deterministic blast-radius analysis to ContextForge so developers and coding
 understand what may be affected before changing a symbol or after modifying a working tree.
 
 The first release covers the existing high-fidelity Python index. It reuses ContextForge's stored
-symbols, call/import/reference graph, related-test discovery, Git metadata, and community labels.
-It does not claim runtime certainty or attempt to edit source code.
+symbols, call/import/reference graph, related-test discovery, and Git metadata. Persistent graph
+indexing will assign deterministic NetworkX community labels so impact reports can identify
+architectural boundaries without depending on the separate portable-graph artifact. It does not
+claim runtime certainty or attempt to edit source code.
 
 ## User workflows
 
@@ -109,6 +111,12 @@ changed-file list but cannot become graph seeds unless an indexed rename target 
 
 Typed Pydantic models for seeds, relationship steps, impacted symbols, risk reasons, and the final
 report. JSON produced by CLI and MCP comes from these models.
+
+### `contextforge/graph/builder.py`
+
+After resolving graph edges, assign stable community identifiers using weighted NetworkX
+modularity and persist each identifier in the graph node's metadata. Empty and disconnected graphs
+remain valid; repeated builds over identical input produce the same labels.
 
 ### `contextforge/impact/analyzer.py`
 
