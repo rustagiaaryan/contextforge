@@ -31,7 +31,7 @@
 - Consumes: the completed `graph_nodes` and `graph_edges` tables in `GraphBuilder.build()`.
 - Produces: integer `metadata["community"]` on every `GraphNode`, stable for identical graphs.
 
-- [ ] **Step 1: Write failing graph-community tests**
+- [x] **Step 1: Write failing graph-community tests**
 
 Add a test that builds the fixture graph twice and asserts every node has an integer community,
 at least one community contains multiple nodes, and the complete node-to-community mapping is
@@ -49,13 +49,13 @@ def test_graph_assigns_stable_dependency_communities(tmp_path: Path) -> None:
     assert len(set(first.values())) < len(first)
 ```
 
-- [ ] **Step 2: Run the test and verify the missing metadata failure**
+- [x] **Step 2: Run the test and verify the missing metadata failure**
 
 Run: `uv run pytest tests/test_graph.py::test_graph_assigns_stable_dependency_communities -q`
 
 Expected: FAIL because graph node metadata does not contain `community`.
 
-- [ ] **Step 3: Implement weighted deterministic community assignment**
+- [x] **Step 3: Implement weighted deterministic community assignment**
 
 Add `_assign_communities(connection)` to `GraphBuilder`. Load graph nodes and non-containment edges
 into an undirected `networkx.Graph`, combine repeated edge confidence as weight, run
@@ -71,13 +71,13 @@ connection.execute(
 )
 ```
 
-- [ ] **Step 4: Run graph tests**
+- [x] **Step 4: Run graph tests**
 
 Run: `uv run pytest tests/test_graph.py -q`
 
 Expected: all graph tests PASS.
 
-- [ ] **Step 5: Commit and push**
+- [x] **Step 5: Commit and push**
 
 ```bash
 git add src/contextforge/graph/builder.py tests/test_graph.py
@@ -98,7 +98,7 @@ git push origin main
 - Produces: `RiskLevel`, `ImpactStep`, `ImpactSeed`, `ImpactedSymbol`, `ImpactReport`.
 - Consumers: analyzer, Git adapter, CLI, MCP.
 
-- [ ] **Step 1: Write failing serialization and validation tests**
+- [x] **Step 1: Write failing serialization and validation tests**
 
 Construct a report and assert that `model_dump(mode="json")` contains lowercase risk values,
 relationship enum values, sorted file/community summaries, and immutable tuple fields. Also assert
@@ -126,13 +126,13 @@ def test_impact_report_serializes_stable_public_schema() -> None:
     assert report.model_dump(mode="json")["risk_level"] == "low"
 ```
 
-- [ ] **Step 2: Run the model test and verify import failure**
+- [x] **Step 2: Run the model test and verify import failure**
 
 Run: `uv run pytest tests/test_impact_models.py -q`
 
 Expected: FAIL because `contextforge.impact` does not exist.
 
-- [ ] **Step 3: Implement frozen Pydantic models**
+- [x] **Step 3: Implement frozen Pydantic models**
 
 Use `ConfigDict(frozen=True)` and these public fields:
 
@@ -180,13 +180,13 @@ class ImpactReport(BaseModel):
     truncated: bool
 ```
 
-- [ ] **Step 4: Run model tests**
+- [x] **Step 4: Run model tests**
 
 Run: `uv run pytest tests/test_impact_models.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit and push**
+- [x] **Step 5: Commit and push**
 
 ```bash
 git add src/contextforge/impact tests/test_impact_models.py
@@ -209,25 +209,25 @@ git push origin main
 - Produces: `ImpactAnalyzer.analyze_symbol(identifier, *, max_depth=3, limit=200) -> ImpactReport`.
 - Produces: `ImpactAnalyzer.analyze_units(units, *, target, mode, max_depth, limit, unresolved=()) -> ImpactReport` for the Git adapter.
 
-- [ ] **Step 1: Write failing direct/transitive impact test**
+- [x] **Step 1: Write failing direct/transitive impact test**
 
 Copy the sample fixture, index it, then analyze `app.utils.join_path`. Assert `Mount.resolve` is
 distance 1, `dispatch` is distance 2, the relationship steps are `CALLS`, path confidence is
 non-increasing, and the route test appears only in `related_tests`.
 
-- [ ] **Step 2: Verify the analyzer test fails because the class is missing**
+- [x] **Step 2: Verify the analyzer test fails because the class is missing**
 
 Run: `uv run pytest tests/test_impact_analyzer.py::test_symbol_impact_finds_callers_and_tests -q`
 
 Expected: FAIL importing `ImpactAnalyzer`.
 
-- [ ] **Step 3: Implement exact symbol resolution**
+- [x] **Step 3: Implement exact symbol resolution**
 
 Resolution order is stable ID, exact qualified name, then unique exact short name. Zero matches raise
 `ValueError("Unknown symbol: ...")`; multiple matches raise a message listing at most ten sorted
 qualified names. Do not use fuzzy matching to choose an impact seed.
 
-- [ ] **Step 4: Implement strongest-shortest upstream traversal**
+- [x] **Step 4: Implement strongest-shortest upstream traversal**
 
 Use a heap keyed by `(distance, -minimum_confidence, tuple(path_node_ids))`. Traverse incoming
 `CALLS`, `REFERENCES`, `IMPORTS`, `INHERITS`, and `TESTS` edges. Test units are collected but not
@@ -235,24 +235,24 @@ enqueued as production impact. For equal-distance alternatives, retain the path 
 minimum edge confidence, then the lexicographically smaller path. Stop expanding at `max_depth` and
 set `truncated=True` when another qualifying unseen node exists after `limit` results.
 
-- [ ] **Step 5: Add risk classification tests before implementation**
+- [x] **Step 5: Add risk classification tests before implementation**
 
 Test LOW for the small fixture, MEDIUM for four synthetic dependents/two files, and HIGH for a
 public function with five direct dependents or a truncated result. Assert exact reason strings,
 not merely enum values.
 
-- [ ] **Step 6: Implement `_classify_risk`**
+- [x] **Step 6: Implement `_classify_risk`**
 
 Calculate production symbol count, distinct production paths, crossed communities, direct dependent
 count, seed visibility (`name.startswith("_")` means private), and truncation. Return the highest
 triggered level and sorted reasons matching the approved thresholds.
 
-- [ ] **Step 7: Add deterministic alternative-path test**
+- [x] **Step 7: Add deterministic alternative-path test**
 
 Insert two same-length graph paths to one dependent with confidence minima `0.4` and `0.72`. Assert
 the report keeps the `0.72` path. Rebuild and re-run to verify identical JSON.
 
-- [ ] **Step 8: Run analyzer and graph tests**
+- [x] **Step 8: Run analyzer and graph tests**
 
 Run: `uv run pytest tests/test_impact_analyzer.py tests/test_graph.py -q`
 

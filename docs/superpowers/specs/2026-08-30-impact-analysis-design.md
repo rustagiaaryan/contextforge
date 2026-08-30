@@ -83,10 +83,14 @@ validation evidence rather than mixed silently into production impact.
 
 Risk is an explainable heuristic, not a prediction of failure:
 
-- `LOW`: at most 3 impacted symbols, one production file, and one community;
-- `MEDIUM`: 4–15 symbols, 2–5 production files, or 2 communities;
-- `HIGH`: more than 15 symbols, more than 5 production files, more than 2 communities, any public
-  class/function with at least 5 direct dependents, or a truncated traversal.
+- `LOW`: at most 3 impacted symbols in one production file;
+- `MEDIUM`: 4–15 symbols, 2–5 production files, or multiple communities across at least 4 symbols;
+- `HIGH`: more than 15 symbols, more than 5 production files, more than 2 communities across at
+  least 8 symbols, any public class/function with at least 5 direct dependents, or a truncated
+  traversal.
+
+Community count is gated by blast-radius size because modularity can legitimately assign separate
+communities to a tiny call chain. This avoids inflating a two-symbol local change to high risk.
 
 The report lists the exact thresholds that caused the classification. Tests do not raise risk by
 themselves; their presence is reported as validation coverage.
