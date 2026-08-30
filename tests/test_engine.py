@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shutil
+import subprocess
 from pathlib import Path
 
 from contextforge import ContextForge
@@ -49,3 +50,41 @@ def test_compiled_markdown_strictly_obeys_small_budget(tmp_path: Path) -> None:
     assert all(item.content_hash and item.source_pointer for item in result.items)
     assert "ContextForge evidence package" in result.to_markdown()
     assert result.to_json().startswith("{")
+
+
+def test_engine_auto_indexes_for_symbol_and_change_impact(tmp_path: Path) -> None:
+    engine = _engine(tmp_path)
+
+    symbol_report = engine.analyze_impact("app.utils.join_path")
+
+    assert symbol_report.seeds[0].qualname == "app.utils.join_path"
+    assert {symbol.qualname for symbol in symbol_report.impacted} >= {
+        "app.routing.Mount.resolve",
+        "app.routing.dispatch",
+    }
+
+    for arguments in (
+        ("init", "-b", "main"),
+        ("config", "user.email", "contextforge@example.invalid"),
+        ("config", "user.name", "ContextForge Tests"),
+        ("add", "."),
+        ("commit", "-m", "fixture"),
+    ):
+        subprocess.run(
+            ["git", *arguments],
+            cwd=engine.repository,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    utility = engine.repository / "app" / "utils.py"
+    utility.write_text(
+        utility.read_text(encoding="utf-8").replace("Join two", "Join URL"),
+        encoding="utf-8",
+    )
+
+    change_report = engine.analyze_changes()
+
+    assert change_report.mode == "changes"
+    assert change_report.changed_files == ("app/utils.py",)
+    assert change_report.seeds[0].qualname == "app.utils.join_path"

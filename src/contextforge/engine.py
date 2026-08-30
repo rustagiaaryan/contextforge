@@ -11,6 +11,7 @@ from contextforge.config import ContextForgeConfig
 from contextforge.context import EvidenceItem, EvidencePackage, StageTiming
 from contextforge.embeddings import LocalHashEmbeddingProvider
 from contextforge.graph import GraphBuilder
+from contextforge.impact import ImpactAnalyzer, ImpactReport
 from contextforge.indexing import RepositoryIndexer
 from contextforge.models import EdgeType, IndexStats, NodeType
 from contextforge.optimization import BudgetOptimizer
@@ -343,6 +344,36 @@ class ContextForge:
         route = AdaptiveRouter().route(query)
         candidates = SymbolRetriever(self.database).search(query, limit=limit * 2)
         return WeightedReranker().rerank(candidates, task=query, route=route)[:limit]
+
+    def analyze_impact(
+        self,
+        identifier: str,
+        *,
+        max_depth: int = 3,
+        limit: int = 200,
+    ) -> ImpactReport:
+        """Return the bounded upstream blast radius of one exact symbol."""
+        self._ensure_index()
+        return ImpactAnalyzer(self.repository, self.database).analyze_symbol(
+            identifier,
+            max_depth=max_depth,
+            limit=limit,
+        )
+
+    def analyze_changes(
+        self,
+        *,
+        base: str | None = None,
+        max_depth: int = 3,
+        limit: int = 200,
+    ) -> ImpactReport:
+        """Map Git changes to indexed symbols and return their combined blast radius."""
+        self._ensure_index()
+        return ImpactAnalyzer(self.repository, self.database).analyze_changes(
+            base=base,
+            max_depth=max_depth,
+            limit=limit,
+        )
 
     def _ensure_index(self) -> None:
         self.database.initialize()

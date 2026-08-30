@@ -11,6 +11,7 @@ from rich.console import Console
 from rich.table import Table
 
 from contextforge import ContextForge, __version__
+from contextforge.impact import ImpactReport
 
 app = typer.Typer(
     help="Compile task-specific repository evidence for autonomous coding agents.",
@@ -108,6 +109,54 @@ def search_repository(
             " ".join(candidate.reasons[:2]),
         )
     console.print(table)
+
+
+@app.command("impact")
+def analyze_symbol_impact(
+    repository: Annotated[Path, typer.Argument(help="Indexed local repository.")],
+    symbol: Annotated[str, typer.Option("--symbol", help="Exact symbol id, name, or qualname.")],
+    depth: Annotated[int, typer.Option("--depth", min=1, max=3)] = 3,
+    limit: Annotated[int, typer.Option("--limit", min=1, max=200)] = 200,
+    json_output: Annotated[bool, typer.Option("--json")] = False,
+) -> None:
+    """Explain which code and tests may depend on one symbol."""
+    try:
+        report = ContextForge.open(repository).analyze_impact(
+            symbol,
+            max_depth=depth,
+            limit=limit,
+        )
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+    if json_output:
+        typer.echo(report.model_dump_json(indent=2))
+        return
+    _render_impact_report(report)
+
+
+@app.command("changes")
+def analyze_repository_changes(
+    repository: Annotated[Path, typer.Argument(help="Indexed Git repository.")],
+    base: Annotated[
+        str | None, typer.Option("--base", help="Optional comparison revision.")
+    ] = None,
+    depth: Annotated[int, typer.Option("--depth", min=1, max=3)] = 3,
+    limit: Annotated[int, typer.Option("--limit", min=1, max=200)] = 200,
+    json_output: Annotated[bool, typer.Option("--json")] = False,
+) -> None:
+    """Explain the combined blast radius of current Git changes."""
+    try:
+        report = ContextForge.open(repository).analyze_changes(
+            base=base,
+            max_depth=depth,
+            limit=limit,
+        )
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+    if json_output:
+        typer.echo(report.model_dump_json(indent=2))
+        return
+    _render_impact_report(report)
 
 
 @graph_app.command("build")
@@ -349,6 +398,42 @@ def _read_task(task: str | None, task_file: Path | None) -> str:
     if not value.strip():
         raise typer.BadParameter("Task text cannot be empty")
     return value.strip()
+
+
+def _render_impact_report(report: ImpactReport) -> None:
+    console.print(
+        f"[bold]{report.risk_level.value.upper()} impact[/bold] for [cyan]{report.target}[/cyan] — "
+        f"{len(report.impacted)} symbols in {len(report.impacted_files)} files"
+    )
+    for reason in report.risk_reasons:
+        console.print(f"  • {reason}")
+    symbols = Table(title="Impacted symbols")
+    symbols.add_column("Distance", justify="right")
+    symbols.add_column("Confidence", justify="right")
+    symbols.add_column("Symbol")
+    symbols.add_column("Source")
+    for item in report.impacted:
+        symbols.add_row(
+            str(item.distance),
+            f"{item.path_confidence:.2f}",
+            item.qualname,
+            f"{item.path}:{item.start_line}-{item.end_line}",
+        )
+    console.print(symbols)
+    if report.related_tests:
+        tests = Table(title="Related tests")
+        tests.add_column("Test")
+        tests.add_column("Source")
+        for item in report.related_tests:
+            tests.add_row(
+                item.qualname.rsplit(".", 1)[-1],
+                f"{item.path}:{item.start_line}-{item.end_line}",
+            )
+        console.print(tests)
+    if report.unresolved:
+        console.print(f"[yellow]Unresolved:[/yellow] {', '.join(report.unresolved)}")
+    if report.truncated:
+        console.print("[yellow]Result limit reached; additional dependents exist.[/yellow]")
 
 
 if __name__ == "__main__":

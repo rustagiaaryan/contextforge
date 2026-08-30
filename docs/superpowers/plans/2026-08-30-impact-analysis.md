@@ -346,39 +346,39 @@ git push origin main
 - Produces: `contextforge impact REPOSITORY --symbol IDENTIFIER [--depth N] [--limit N] [--json]`.
 - Produces: `contextforge changes REPOSITORY [--base REF] [--depth N] [--limit N] [--json]`.
 
-- [ ] **Step 1: Write failing engine API tests**
+- [x] **Step 1: Write failing engine API tests**
 
 Assert both methods auto-create a missing index and return the same schema as direct analyzer calls.
 
-- [ ] **Step 2: Run the engine tests and verify missing methods**
+- [x] **Step 2: Run the engine tests and verify missing methods**
 
 Run: `uv run pytest tests/test_engine.py -q`
 
 Expected: FAIL with missing `analyze_impact` / `analyze_changes` attributes.
 
-- [ ] **Step 3: Add minimal engine adapters**
+- [x] **Step 3: Add minimal engine adapters**
 
 Call `_ensure_index()`, instantiate `ImpactAnalyzer(self.repository, self.database)`, and return its
 report. Keep Git and traversal logic out of `engine.py`.
 
-- [ ] **Step 4: Write failing CLI JSON and human-output tests**
+- [x] **Step 4: Write failing CLI JSON and human-output tests**
 
 Assert `--json` parses into an `ImpactReport`; human output contains the risk level, target, impacted
 files, distance-grouped symbols, related tests, and truncation warning when applicable. Assert
 invalid symbols and revisions exit nonzero with concise messages.
 
-- [ ] **Step 5: Implement the Typer commands and one shared renderer**
+- [x] **Step 5: Implement the Typer commands and one shared renderer**
 
 Use Typer bounds (`min=1`, `max=3/200`). `_render_impact_report(report)` creates Rich summary and
 symbol tables. JSON output is `report.model_dump_json(indent=2)`.
 
-- [ ] **Step 6: Run API and CLI tests**
+- [x] **Step 6: Run API and CLI tests**
 
 Run: `uv run pytest tests/test_engine.py tests/test_cli.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit and push**
+- [x] **Step 7: Commit and push**
 
 ```bash
 git add src/contextforge/engine.py src/contextforge/cli.py tests/test_engine.py tests/test_cli.py

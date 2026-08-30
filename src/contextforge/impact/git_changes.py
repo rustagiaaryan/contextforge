@@ -64,9 +64,16 @@ class GitChangeReader:
                 "--",
             )
         )
-        changes = [change for output in outputs for change in self.parse_diff(output)]
+        changes = [
+            change
+            for output in outputs
+            for change in self.parse_diff(output)
+            if not self._is_internal(change.path)
+        ]
         untracked = self._run("ls-files", "--others", "--exclude-standard", "-z")
         for relative_path in filter(None, untracked.split("\0")):
+            if self._is_internal(relative_path):
+                continue
             path = self.repository / relative_path
             line_count = len(path.read_text(encoding="utf-8", errors="replace").splitlines())
             changes.append(
@@ -172,3 +179,7 @@ class GitChangeReader:
             change.status,
             change.old_path or "",
         )
+
+    @staticmethod
+    def _is_internal(path: str) -> bool:
+        return path == ".contextforge" or path.startswith((".contextforge/", "contextforge-out/"))
