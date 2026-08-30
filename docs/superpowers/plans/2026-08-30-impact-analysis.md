@@ -504,7 +504,7 @@ git commit -m "docs: add the change impact workflow"
 git push origin main
 ```
 
-- [ ] **Step 8: Verify CI and repository state**
+- [x] **Step 8: Verify CI and repository state**
 
 Run `gh run watch --exit-status` for the pushed commit, then verify `HEAD == origin/main` and the
 working tree is clean.
