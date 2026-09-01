@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import PurePosixPath
 
+import networkx as nx
+
 from contextforge.codegraph.models import (
     CONFIDENCE_WEIGHTS,
     ArtifactEdge,
@@ -13,6 +15,7 @@ from contextforge.codegraph.models import (
     Extraction,
 )
 from contextforge.codegraph.validate import validate_extraction
+from contextforge.graph.centrality import normalized_weighted_pagerank
 
 
 def build_graph(extractions: list[Extraction]) -> CodeGraph:
@@ -86,7 +89,24 @@ def build_graph(extractions: list[Extraction]) -> CodeGraph:
         extraction_count=len(extractions),
         languages=sorted({extraction["language"] for extraction in extractions}),
     )
+    _assign_dependency_centrality(graph)
     return graph
+
+
+def _assign_dependency_centrality(graph: CodeGraph) -> None:
+    dependency_graph = nx.DiGraph()
+    dependency_graph.add_nodes_from(str(node_id) for node_id in graph.nodes)
+    for source, target, attributes in graph.edges(data=True):
+        if attributes.get("relation") not in {"calls", "imports", "inherits"}:
+            continue
+        previous = float(dependency_graph.get_edge_data(source, target, {}).get("weight", 0.0))
+        dependency_graph.add_edge(
+            str(source),
+            str(target),
+            weight=previous + float(attributes.get("weight", 1.0)),
+        )
+    centrality = normalized_weighted_pagerank(dependency_graph)
+    nx.set_node_attributes(graph, centrality, "centrality")
 
 
 def _resolve_candidates(

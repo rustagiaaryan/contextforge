@@ -129,6 +129,12 @@ def test_pipeline_exports_real_queryable_artifacts(tmp_path: Path) -> None:
     assert result.edges > 0
     assert result.communities > 0
     assert result.graph_json.is_file()
+    payload = json.loads(result.graph_json.read_text(encoding="utf-8"))
+    centrality = {node["id"]: node["centrality"] for node in payload["nodes"]}
+    assert centrality
+    assert min(centrality.values()) >= 0.0
+    assert max(centrality.values()) == 1.0
+    assert centrality["function:services/paths.py:join_path"] > 0.0
     assert "Central concepts" in result.report_markdown.read_text(encoding="utf-8")
     html = result.graph_html.read_text(encoding="utf-8")
     assert "Interactive repository graph" in html
@@ -138,6 +144,9 @@ def test_pipeline_exports_real_queryable_artifacts(tmp_path: Path) -> None:
     assert "addEventListener('input',applyFilter)" in html
     assert "addEventListener('wheel'" in html
     assert "addEventListener('pointermove'" in html
+    assert "Centrality" in html
+    assert '"radius":' in html
+    assert "n.radius" in html
 
     payload = json.loads(result.graph_json.read_text(encoding="utf-8"))
     assert payload["generator"] == "ContextForge"

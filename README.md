@@ -64,7 +64,7 @@ open repository/contextforge-out/graph.html       # macOS
 xdg-open repository/contextforge-out/graph.html  # Linux
 ```
 
-The custom SVG explorer uses a dark, community-colored layout. Search dims unrelated nodes, the community selector filters subsystems, and clicking a node shows its source location and incoming and outgoing relationships. The HTML is self-contained and works without a server.
+The custom SVG explorer uses a dark, community-colored layout, with node size reflecting normalized dependency centrality. Search dims unrelated nodes, the community selector filters subsystems, and clicking a node shows its source location, centrality, and incoming and outgoing relationships. The HTML is self-contained and works without a server.
 
 ## Explore the graph
 
