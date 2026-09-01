@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from contextforge.config import ContextForgeConfig
 from contextforge.context import EvidenceItem, EvidencePackage, StageTiming
 from contextforge.embeddings import LocalHashEmbeddingProvider
-from contextforge.graph import GraphBuilder
+from contextforge.graph import GraphBuilder, GraphQuery
 from contextforge.impact import ImpactAnalyzer, ImpactReport
 from contextforge.indexing import RepositoryIndexer
 from contextforge.models import EdgeType, IndexStats, NodeType
@@ -133,6 +133,7 @@ class ContextForge:
         if not self.database.list_units(node_types=(NodeType.FILE,)):
             self.index()
         timings: list[StageTiming] = []
+        reranker = self._reranker()
 
         started = time.perf_counter()
         route = AdaptiveRouter().route(task)
@@ -162,7 +163,7 @@ class ContextForge:
                 SemanticRetriever(self.database, self.embedding_provider).search(task, limit=35)
             )
         initial = merge_candidates(initial_groups)
-        initial_ranked = WeightedReranker().rerank(initial, task=task, route=route)
+        initial_ranked = reranker.rerank(initial, task=task, route=route)
         anchors = initial_ranked[:8]
         timings.append(self._timing("anchor_retrieval", started, len(initial)))
 
@@ -246,7 +247,7 @@ class ContextForge:
 
         started = time.perf_counter()
         all_candidates = merge_candidates([initial, structural, related_tests, evolved])
-        ranked = WeightedReranker().rerank(all_candidates, task=task, route=route)
+        ranked = reranker.rerank(all_candidates, task=task, route=route)
         timings.append(self._timing("reranking", started, len(ranked)))
 
         # Reserve the measured package trace and Git metadata before selecting source.
@@ -336,14 +337,20 @@ class ContextForge:
                 )
             )
         candidates = merge_candidates(groups)
-        return WeightedReranker().rerank(candidates, task=query, route=route)[:limit]
+        return self._reranker().rerank(candidates, task=query, route=route)[:limit]
 
     def search_symbols(self, query: str, *, limit: int = 20) -> list[Candidate]:
         """Search exact and fuzzy symbol names with explanations."""
         self._ensure_index()
         route = AdaptiveRouter().route(query)
         candidates = SymbolRetriever(self.database).search(query, limit=limit * 2)
-        return WeightedReranker().rerank(candidates, task=query, route=route)[:limit]
+        return self._reranker().rerank(candidates, task=query, route=route)[:limit]
+
+    def _reranker(self, *, redundancy_penalty: bool = True) -> WeightedReranker:
+        return WeightedReranker(
+            redundancy_penalty=redundancy_penalty,
+            centrality_scores=GraphQuery(self.database).centrality_scores(),
+        )
 
     def analyze_impact(
         self,

@@ -26,6 +26,24 @@ class GraphQuery:
         assert self._nodes is not None
         return self._nodes.get(node_id)
 
+    def centrality_scores(self) -> dict[str, float]:
+        """Return normalized dependency centrality for source-backed graph nodes."""
+        with self.database.connection() as connection:
+            rows = connection.execute(
+                """
+                SELECT node_id, metadata_json
+                FROM graph_nodes
+                WHERE unit_id IS NOT NULL
+                ORDER BY node_id
+                """
+            ).fetchall()
+        scores: dict[str, float] = {}
+        for row in rows:
+            value = json.loads(str(row["metadata_json"])).get("centrality")
+            if isinstance(value, int | float):
+                scores[str(row["node_id"])] = float(value)
+        return scores
+
     def edges(self, node_id: str) -> tuple[tuple[GraphEdge, ...], tuple[GraphEdge, ...]]:
         """Return `(incoming, outgoing)` edges for a node."""
         self._load_cache()

@@ -7,7 +7,7 @@ from contextforge.graph import GraphBuilder
 from contextforge.indexing import RepositoryIndexer
 from contextforge.reranking import WeightedReranker
 from contextforge.retrieval import LexicalRetriever, QueryEvolution, SymbolRetriever
-from contextforge.retrieval.models import merge_candidates
+from contextforge.retrieval.models import Candidate, RetrievalSource, merge_candidates
 from contextforge.routing import AdaptiveRouter, RouteSource, TaskType
 from contextforge.storage import Database
 
@@ -49,6 +49,27 @@ def test_weighted_reranker_rewards_evidence_agreement_and_explains_cost(tmp_path
     assert len(results[0].retrieved_by) >= 2
     assert 0.0 <= results[0].score <= 1.0
     assert "token_cost_penalty" in results[0].metadata
+
+
+def test_weighted_reranker_uses_capped_dependency_centrality_bonus(tmp_path: Path) -> None:
+    database = _database(tmp_path)
+    units = {unit.name: unit for unit in database.list_units()}
+    candidates = [Candidate(unit=units["dispatch"]), Candidate(unit=units["join_path"])]
+    for candidate in candidates:
+        candidate.add_signal(RetrievalSource.LEXICAL, 0.5, "Equal lexical evidence.")
+
+    results = WeightedReranker(
+        centrality_scores={
+            units["dispatch"].unit_id: 0.1,
+            units["join_path"].unit_id: 0.9,
+        }
+    ).rerank(candidates, task="routing", route=AdaptiveRouter().route("routing"))
+    by_name = {candidate.unit.name: candidate for candidate in results}
+
+    assert by_name["join_path"].metadata["dependency_centrality"] == 0.9
+    assert by_name["join_path"].metadata["centrality_bonus"] == 0.045
+    assert by_name["dispatch"].metadata["centrality_bonus"] == 0.005
+    assert any("dependency centrality" in reason for reason in by_name["join_path"].reasons)
 
 
 def test_query_evolution_is_single_pass_and_strictly_bounded(tmp_path: Path) -> None:

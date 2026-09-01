@@ -38,6 +38,9 @@ def test_engine_indexes_and_compiles_real_evidence_with_trace(tmp_path: Path) ->
     assert result.timings[-1].stage == "budget_optimization"
     assert estimate_tokens(result.to_markdown()) == result.estimated_tokens
 
+    ranked = engine.search_code("route prefix", limit=10)
+    assert any("centrality_bonus" in candidate.metadata for candidate in ranked)
+
 
 def test_compiled_markdown_strictly_obeys_small_budget(tmp_path: Path) -> None:
     result = _engine(tmp_path).compile_context(

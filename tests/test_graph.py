@@ -89,7 +89,7 @@ def test_graph_assigns_stable_dependency_communities(tmp_path: Path) -> None:
 
 
 def test_graph_persists_stable_normalized_dependency_centrality(tmp_path: Path) -> None:
-    database, _ = _graph(tmp_path)
+    database, graph = _graph(tmp_path)
     first = _centrality_map(database)
     join_path = next(unit for unit in database.list_units() if unit.name == "join_path")
 
@@ -100,3 +100,4 @@ def test_graph_persists_stable_normalized_dependency_centrality(tmp_path: Path) 
     assert all(0.0 <= score <= 1.0 for score in first.values())
     assert max(first.values()) == 1.0
     assert first[join_path.unit_id] > first["repository:."]
+    assert graph.centrality_scores()[join_path.unit_id] == first[join_path.unit_id]

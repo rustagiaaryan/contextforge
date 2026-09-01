@@ -93,6 +93,18 @@ def test_evaluator_runs_required_configs_and_an_ablation() -> None:
     json.loads(run.model_dump_json())
 
 
+def test_evaluator_can_ablate_dependency_centrality() -> None:
+    run = Evaluator(DATASET).evaluate(
+        configurations=(EvaluationConfig.FULL,),
+        ablations=(Ablation.CENTRALITY,),
+        top_k=3,
+        token_budget=1_200,
+        limit=1,
+    )
+
+    assert [result.ablation for result in run.results] == [None, Ablation.CENTRALITY]
+
+
 def test_checked_historical_claims_match_pinned_manifest() -> None:
     run = HistoricalBenchmarkRun.model_validate_json(HISTORICAL_RESULT.read_text())
     assert run.manifest_sha256 == sha256(HISTORICAL_MANIFEST.read_bytes()).hexdigest()

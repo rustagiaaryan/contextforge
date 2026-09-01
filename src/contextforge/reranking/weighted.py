@@ -29,8 +29,14 @@ SOURCE_WEIGHTS: dict[RetrievalSource, float] = {
 class WeightedReranker:
     """Fuse normalized retrieval evidence without claiming a trained model."""
 
-    def __init__(self, *, redundancy_penalty: bool = True) -> None:
+    def __init__(
+        self,
+        *,
+        redundancy_penalty: bool = True,
+        centrality_scores: dict[str, float] | None = None,
+    ) -> None:
         self.redundancy_penalty = redundancy_penalty
+        self.centrality_scores = centrality_scores or {}
 
     def rerank(
         self, candidates: list[Candidate], *, task: str, route: RetrievalRoute
@@ -74,6 +80,16 @@ class WeightedReranker:
                 distance_penalty = min(0.12, candidate.graph_distance * 0.035)
                 score -= distance_penalty
                 candidate.metadata["graph_distance_penalty"] = distance_penalty
+            centrality = min(
+                1.0,
+                max(0.0, self.centrality_scores.get(candidate.unit.unit_id, 0.0)),
+            )
+            if centrality:
+                centrality_bonus = round(centrality * 0.05, 6)
+                score += centrality_bonus
+                candidate.metadata["dependency_centrality"] = centrality
+                candidate.metadata["centrality_bonus"] = centrality_bonus
+                candidate.reasons.append(f"Reranker bonus: dependency centrality {centrality:.3f}.")
             cost_penalty = min(0.09, math.log1p(candidate.unit.estimated_tokens) / 100.0)
             score -= cost_penalty
             candidate.metadata["token_cost_penalty"] = cost_penalty
