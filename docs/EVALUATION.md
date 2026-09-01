@@ -98,21 +98,21 @@ harness rather than broad retrieval quality.
 
 | Configuration | File R@3 | File P@3 | Symbol R@3 | MRR | NDCG@3 | Gold-line coverage | Package tokens | Latency ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Filename baseline | 0.778 | 0.556 | 0.000 | 0.500 | 0.564 | 0.688 | 245 | 1.42 |
-| BM25 only | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 294 | 10.01 |
-| Semantic only | 0.778 | 0.556 | 0.667 | 1.000 | 0.823 | 0.716 | 285 | 9.05 |
-| Hybrid | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 619 | 27.88 |
-| Hybrid + graph | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 655 | 77.33 |
-| Hybrid + graph + history | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 655 | 85.65 |
-| Full adaptive | 0.889 | 0.667 | 0.611 | 1.000 | 0.922 | 0.415 | 885 | 103.21 |
+| Filename baseline | 0.778 | 0.556 | 0.000 | 0.500 | 0.564 | 0.688 | 245 | 1.62 |
+| BM25 only | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 294 | 11.52 |
+| Semantic only | 0.778 | 0.556 | 0.667 | 1.000 | 0.823 | 0.716 | 285 | 10.36 |
+| Hybrid | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 619 | 32.09 |
+| Hybrid + graph | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 655 | 85.88 |
+| Hybrid + graph + history | 0.889 | 0.667 | 0.778 | 1.000 | 0.922 | 0.658 | 655 | 104.00 |
+| Full adaptive | 0.889 | 0.667 | 0.611 | 1.000 | 0.922 | 0.415 | 885 | 117.19 |
 
 All eight ablations ran. Removing the redundancy penalty reduced file Recall@3 from 0.889 to
 0.778 and NDCG@3 from 0.922 to 0.844 while increasing package evidence from 885 to 1,144 tokens.
 Removing token optimization also increased evidence to 1,144 tokens. Removing graph expansion
-kept top-three quality and reduced latency to 46.65 ms.
+kept top-three quality and reduced latency to 53.23 ms.
 
-The clean fixture index took 160.74 ms with 0.229 MB Python-traced peak memory. An immediate
-incremental index took 53.63 ms and parsed zero files. Because the fixture contains only 198 raw
+The clean fixture index took 134.70 ms with 0.147 MB Python-traced peak memory. An immediate
+incremental index took 60.54 ms and parsed zero files. Because the fixture contains only 198 raw
 source tokens, explanation overhead creates negative token savings; compression claims therefore
 use the historical benchmark.
 

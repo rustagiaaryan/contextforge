@@ -24,6 +24,7 @@ interactive HTML · JSON · Markdown · MCP tools
 - Builds a multi-language graph of files, classes, functions, methods, imports, calls, and inheritance
 - Labels relationships as `EXTRACTED`, `INFERRED`, or `AMBIGUOUS`
 - Groups strongly connected code into architectural communities
+- Computes deterministic dependency centrality for indexed symbols
 - Generates a standalone interactive graph with search, filters, node details, pan, and zoom
 - Answers graph queries, explains components, and traces paths between symbols
 - Compiles task-specific code, tests, and Git evidence under a requested token budget
@@ -153,8 +154,9 @@ detect → extract → build → resolve → cluster → analyze → export
 1. Ignore-aware traversal finds supported files.
 2. Tree-sitter extracts definitions and structural relationships without executing repository code.
 3. NetworkX resolves local references into a directed multigraph.
-4. Leiden clustering is used when installed; otherwise deterministic NetworkX modularity finds communities.
-5. The exporter writes the complete JSON graph, a Markdown report, and the interactive HTML explorer.
+4. Dependency PageRank identifies structurally central symbols and stores the score with indexed graph nodes without overriding task relevance.
+5. Leiden clustering is used when installed; otherwise deterministic NetworkX modularity finds communities.
+6. The exporter writes the complete JSON graph, a Markdown report, and the interactive HTML explorer.
 
 The default installation supports 26 Tree-sitter grammar modes across 44 extensions, including Python, JavaScript, TypeScript, Go, Rust, Java, C/C++, C#, Kotlin, Ruby, PHP, Swift, Bash, and others. Python has the highest-fidelity task-retrieval index; multi-language graph extraction is best effort.
 

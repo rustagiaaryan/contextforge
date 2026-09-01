@@ -17,9 +17,12 @@ artifacts, and the agent skill are adapters over explicit pipelines.
 7. **Reranking and evolution** normalize candidates, run one bounded concept-expansion pass, and combine explainable signals without claiming a learned ranker.
 8. **Budget optimization** uses relevance, source diversity, structural coverage, test representation, cost, and redundancy to choose source ranges under a hard token cap.
 9. **Adapters** expose evidence through Python, JSON/Markdown, CLI, MCP, and a read-only local dashboard.
-10. **Graph-artifact pipeline** uses Tree-sitter extraction, NetworkX resolution and clustering,
+10. **Graph analysis** assigns deterministic communities and normalized weighted PageRank over
+    calls, imports, inheritance, references, and test relationships. Centrality is inspectable
+    metadata rather than a relevance bonus, so task evidence controls ranking.
+11. **Graph-artifact pipeline** uses Tree-sitter extraction, NetworkX resolution and clustering,
     deterministic analysis, and JSON/Markdown/HTML exports for graph-first exploration.
-11. **Impact analysis** maps exact symbols or zero-context Git diff ranges to graph seeds, walks
+12. **Impact analysis** maps exact symbols or zero-context Git diff ranges to graph seeds, walks
     upstream dependency edges, separates related tests, and reports strongest paths under strict
     depth and result limits.
 
