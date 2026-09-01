@@ -150,7 +150,7 @@ class GraphBuilder:
                     float(link["confidence"]) * 0.9,
                     json.loads(str(link["metadata_json"])),
                 )
-            self._assign_communities(connection)
+            self._assign_graph_metrics(connection)
             node_count = int(connection.execute("SELECT COUNT(*) FROM graph_nodes").fetchone()[0])
             edge_count = int(connection.execute("SELECT COUNT(*) FROM graph_edges").fetchone()[0])
         return node_count, edge_count
@@ -211,8 +211,8 @@ class GraphBuilder:
         return None, 0.0
 
     @staticmethod
-    def _assign_communities(connection: sqlite3.Connection) -> None:
-        """Persist deterministic weighted communities on every graph node."""
+    def _assign_graph_metrics(connection: sqlite3.Connection) -> None:
+        """Persist deterministic weighted communities and dependency centrality."""
         node_rows = connection.execute(
             "SELECT node_id, metadata_json FROM graph_nodes ORDER BY node_id"
         ).fetchall()
@@ -255,14 +255,90 @@ class GraphBuilder:
             for community_id, group in enumerate(groups)
             for node_id in sorted(group)
         }
+        directed = nx.DiGraph()
+        directed.add_nodes_from(str(row["node_id"]) for row in node_rows)
+        centrality_edges = connection.execute(
+            """
+            SELECT source_id, target_id, confidence
+            FROM graph_edges
+            WHERE edge_type IN (?, ?, ?, ?, ?)
+            ORDER BY source_id, target_id, edge_type
+            """,
+            (
+                EdgeType.CALLS.value,
+                EdgeType.IMPORTS.value,
+                EdgeType.INHERITS.value,
+                EdgeType.REFERENCES.value,
+                EdgeType.TESTS.value,
+            ),
+        ).fetchall()
+        for row in centrality_edges:
+            source = str(row["source_id"])
+            target = str(row["target_id"])
+            if source == target:
+                continue
+            previous = float(directed.get_edge_data(source, target, {}).get("weight", 0.0))
+            directed.add_edge(source, target, weight=previous + float(row["confidence"]))
+        raw_centrality = GraphBuilder._weighted_pagerank(directed)
+        maximum = max(raw_centrality.values(), default=1.0)
+        centrality = {
+            node_id: round(score / maximum, 12) if maximum else 0.0
+            for node_id, score in raw_centrality.items()
+        }
         for row in node_rows:
             node_id = str(row["node_id"])
             metadata = json.loads(str(row["metadata_json"]))
             metadata["community"] = communities[node_id]
+            metadata["centrality"] = centrality[node_id]
             connection.execute(
                 "UPDATE graph_nodes SET metadata_json = ? WHERE node_id = ?",
                 (json.dumps(metadata, sort_keys=True), node_id),
             )
+
+    @staticmethod
+    def _weighted_pagerank(
+        graph: nx.DiGraph,
+        *,
+        damping: float = 0.85,
+        tolerance: float = 1e-10,
+        max_iterations: int = 100,
+    ) -> dict[str, float]:
+        """Compute weighted PageRank without requiring NumPy or SciPy."""
+        nodes = sorted(str(node_id) for node_id in graph.nodes)
+        if not nodes:
+            return {}
+        node_count = len(nodes)
+        ranks = {node_id: 1.0 / node_count for node_id in nodes}
+        outgoing: dict[str, tuple[tuple[str, float], ...]] = {}
+        totals: dict[str, float] = {}
+        for node_id in nodes:
+            edges = tuple(
+                sorted(
+                    (
+                        (str(target), float(attributes.get("weight", 1.0)))
+                        for _, target, attributes in graph.out_edges(node_id, data=True)
+                    ),
+                    key=lambda item: item[0],
+                )
+            )
+            outgoing[node_id] = edges
+            totals[node_id] = sum(weight for _, weight in edges)
+        teleport = (1.0 - damping) / node_count
+        for _ in range(max_iterations):
+            dangling = sum(ranks[node_id] for node_id in nodes if totals[node_id] == 0.0)
+            updated = {node_id: teleport + damping * dangling / node_count for node_id in nodes}
+            for source in nodes:
+                total = totals[source]
+                if total == 0.0:
+                    continue
+                contribution = damping * ranks[source] / total
+                for target, weight in outgoing[source]:
+                    updated[target] += contribution * weight
+            delta = sum(abs(updated[node_id] - ranks[node_id]) for node_id in nodes)
+            ranks = updated
+            if delta <= tolerance * node_count:
+                break
+        return ranks
 
     @staticmethod
     def _insert_edge(

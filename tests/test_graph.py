@@ -31,6 +31,17 @@ def _community_map(database: Database) -> dict[str, int]:
     }
 
 
+def _centrality_map(database: Database) -> dict[str, float]:
+    with database.connection() as connection:
+        rows = connection.execute(
+            "SELECT node_id, metadata_json FROM graph_nodes ORDER BY node_id"
+        ).fetchall()
+    return {
+        str(row["node_id"]): float(json.loads(str(row["metadata_json"]))["centrality"])
+        for row in rows
+    }
+
+
 def test_graph_builds_containment_import_and_call_edges(tmp_path: Path) -> None:
     database, graph = _graph(tmp_path)
     resolve = next(
@@ -75,3 +86,17 @@ def test_graph_assigns_stable_dependency_communities(tmp_path: Path) -> None:
     assert first == second
     assert all(isinstance(value, int) for value in first.values())
     assert len(set(first.values())) < len(first)
+
+
+def test_graph_persists_stable_normalized_dependency_centrality(tmp_path: Path) -> None:
+    database, _ = _graph(tmp_path)
+    first = _centrality_map(database)
+    join_path = next(unit for unit in database.list_units() if unit.name == "join_path")
+
+    GraphBuilder(tmp_path / "repository", database).build()
+    second = _centrality_map(database)
+
+    assert first == second
+    assert all(0.0 <= score <= 1.0 for score in first.values())
+    assert max(first.values()) == 1.0
+    assert first[join_path.unit_id] > first["repository:."]
