@@ -22,10 +22,10 @@ uses NetworkX modularity clustering.
 
 The output contains:
 
-- `graph.json`: the complete portable node/edge graph, metadata, confidence counts, communities,
-  central concepts, and stage timings;
-- `GRAPH_REPORT.md`: central nodes, subsystem summaries, cross-community relationships, and useful
-  follow-up questions;
+- `graph.json`: the complete portable node/edge graph, normalized dependency centrality,
+  confidence counts, communities, architectural hubs, and stage timings;
+- `GRAPH_REPORT.md`: centrality-ranked hubs with degree context, subsystem summaries,
+  cross-community relationships, and useful follow-up questions;
 - `graph.html`: a standalone interactive SVG explorer with search, community filters, pan/zoom,
   and node relationship details.
 

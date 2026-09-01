@@ -63,11 +63,12 @@ class Extraction(TypedDict):
 
 
 class GodNodeSummary(TypedDict):
-    """One high-degree concept in the generated graph."""
+    """One structurally central concept in the generated graph."""
 
     id: str
     label: str
     kind: str
+    centrality: float
     degree: int
     source_file: str
 

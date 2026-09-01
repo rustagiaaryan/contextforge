@@ -12,10 +12,12 @@ from contextforge.codegraph import (
     query_graph,
     shortest_path,
 )
+from contextforge.codegraph.analyze import analyze_graph
 from contextforge.codegraph.build import build_graph
 from contextforge.codegraph.detect import collect_files
 from contextforge.codegraph.extract import LANGUAGES, _load_language, extract_file
-from contextforge.codegraph.models import ConfidenceLabel, Extraction
+from contextforge.codegraph.models import CodeGraph, ConfidenceLabel, Extraction
+from contextforge.codegraph.report import render_report
 from contextforge.codegraph.validate import validate_extraction
 
 FIXTURE = Path(__file__).parent / "fixtures" / "multilang_repo"
@@ -109,6 +111,51 @@ def test_ambiguous_symbol_resolution_is_explicit() -> None:
     assert {edge[2]["confidence"] for edge in calls} == {"AMBIGUOUS"}
 
 
+def test_report_ranks_architectural_hubs_by_dependency_centrality() -> None:
+    graph = CodeGraph()
+    graph.add_node(
+        "caller",
+        label="Caller",
+        kind="function",
+        source_file="caller.py",
+        community=0,
+        centrality=0.1,
+    )
+    graph.add_node(
+        "hub",
+        label="SharedService",
+        kind="class",
+        source_file="service.py",
+        community=0,
+        centrality=1.0,
+    )
+    for index in range(3):
+        leaf = f"leaf-{index}"
+        graph.add_node(
+            leaf,
+            label=leaf,
+            kind="function",
+            source_file="caller.py",
+            community=0,
+            centrality=0.05,
+        )
+        graph.add_edge(
+            "caller",
+            leaf,
+            relation="calls",
+            confidence="EXTRACTED",
+        )
+    graph.add_edge("caller", "hub", relation="calls", confidence="EXTRACTED")
+
+    summary = analyze_graph(graph)
+    report = render_report("sample", summary, timings={"analyze": 1.0})
+
+    assert summary["god_nodes"][0]["id"] == "hub"
+    assert summary["god_nodes"][0]["centrality"] == 1.0
+    assert "## Architectural hubs" in report
+    assert "| `SharedService` | class | 100.0% | 1 | `service.py` |" in report
+
+
 def test_pipeline_exports_real_queryable_artifacts(tmp_path: Path) -> None:
     repository = tmp_path / "repository"
     repository.mkdir()
@@ -135,7 +182,7 @@ def test_pipeline_exports_real_queryable_artifacts(tmp_path: Path) -> None:
     assert min(centrality.values()) >= 0.0
     assert max(centrality.values()) == 1.0
     assert centrality["function:services/paths.py:join_path"] > 0.0
-    assert "Central concepts" in result.report_markdown.read_text(encoding="utf-8")
+    assert "Architectural hubs" in result.report_markdown.read_text(encoding="utf-8")
     html = result.graph_html.read_text(encoding="utf-8")
     assert "Interactive repository graph" in html
     assert 'id="search"' in html

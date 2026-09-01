@@ -15,19 +15,27 @@ from contextforge.codegraph.models import (
 
 def analyze_graph(graph: CodeGraph, *, limit: int = 12) -> GraphSummary:
     """Identify central nodes, communities, and cross-subsystem connections."""
-    degrees = sorted(
-        ((str(node), int(degree)) for node, degree in graph.degree()),
-        key=lambda item: (-item[1], item[0]),
+    hubs = sorted(
+        (
+            (
+                str(node),
+                float(graph.nodes[node].get("centrality", 0.0)),
+                int(degree),
+            )
+            for node, degree in graph.degree()
+        ),
+        key=lambda item: (-item[1], -item[2], item[0]),
     )
     god_nodes: list[GodNodeSummary] = [
         {
             "id": node_id,
             "label": str(graph.nodes[node_id].get("label", node_id)),
             "kind": str(graph.nodes[node_id].get("kind", "unknown")),
+            "centrality": centrality,
             "degree": degree,
             "source_file": str(graph.nodes[node_id].get("source_file", "")),
         }
-        for node_id, degree in degrees[:limit]
+        for node_id, centrality, degree in hubs[:limit]
     ]
     grouped: dict[int, list[str]] = defaultdict(list)
     for node_id, attributes in graph.nodes(data=True):

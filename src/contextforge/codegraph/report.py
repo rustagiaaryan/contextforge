@@ -22,14 +22,15 @@ def render_report(repository_name: str, summary: GraphSummary, *, timings: dict[
         "- Pipeline: "
         + ", ".join(f"{stage} {latency:.1f} ms" for stage, latency in timings.items()),
         "",
-        "## Central concepts",
+        "## Architectural hubs",
         "",
-        "| Concept | Kind | Degree | Source |",
-        "| --- | --- | ---: | --- |",
+        "| Concept | Kind | Centrality | Degree | Source |",
+        "| --- | --- | ---: | ---: | --- |",
     ]
     for node in summary["god_nodes"]:
         lines.append(
-            f"| `{node['label']}` | {node['kind']} | {node['degree']} | "
+            f"| `{node['label']}` | {node['kind']} | {node['centrality']:.1%} | "
+            f"{node['degree']} | "
             f"`{node['source_file'] or 'external'}` |"
         )
     lines.extend(["", "## Communities", ""])
