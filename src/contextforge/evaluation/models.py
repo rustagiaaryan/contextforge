@@ -34,7 +34,6 @@ class Ablation(StrEnum):
     ROUTING = "without_routing"
     TOKEN_OPTIMIZATION = "without_token_optimization"
     REDUNDANCY_PENALTY = "without_redundancy_penalty"
-    CENTRALITY = "without_centrality"
 
 
 class GoldLineRange(BaseModel):

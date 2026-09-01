@@ -21,7 +21,6 @@ from contextforge.evaluation.models import (
     TaskEvaluation,
     TaskSpec,
 )
-from contextforge.graph import GraphQuery
 from contextforge.models import EdgeType, NodeType
 from contextforge.optimization import BudgetOptimizer
 from contextforge.optimization.selector import candidate_render_cost
@@ -276,14 +275,8 @@ class Evaluator:
                 reasoning_summary="Evaluation ablation enables every source without routing.",
                 matched_rules=("routing_ablation",),
             )
-        centrality_scores = (
-            GraphQuery(engine.database).centrality_scores()
-            if configuration is EvaluationConfig.FULL and ablation is not Ablation.CENTRALITY
-            else {}
-        )
         ranked = WeightedReranker(
-            redundancy_penalty=ablation is not Ablation.REDUNDANCY_PENALTY,
-            centrality_scores=centrality_scores,
+            redundancy_penalty=ablation is not Ablation.REDUNDANCY_PENALTY
         ).rerank(candidates, task=task, route=route)
         graph_count = 0
         use_graph = (
@@ -357,8 +350,7 @@ class Evaluator:
                         history_candidates.append(candidate)
         merged = merge_candidates([candidates, expanded, tests, evolved, history_candidates])
         final = WeightedReranker(
-            redundancy_penalty=ablation is not Ablation.REDUNDANCY_PENALTY,
-            centrality_scores=centrality_scores,
+            redundancy_penalty=ablation is not Ablation.REDUNDANCY_PENALTY
         ).rerank(merged, task=task, route=route)
         if configuration in {EvaluationConfig.BM25, EvaluationConfig.SEMANTIC}:
             selected = final[:top_k]
