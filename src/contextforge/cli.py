@@ -239,6 +239,17 @@ def trace_repository_graph_path(
         )
 
 
+@graph_app.command("hubs")
+def list_repository_graph_hubs(
+    graph_file: Annotated[Path, typer.Argument(help="Generated graph.json artifact.")],
+    limit: Annotated[int, typer.Option("--limit", min=1, max=100)] = 12,
+) -> None:
+    """List the most central architectural components as JSON."""
+    from contextforge.codegraph import load_graph, rank_hubs
+
+    typer.echo(json.dumps(rank_hubs(load_graph(graph_file), limit=limit), indent=2))
+
+
 @graph_app.command("explain")
 def explain_repository_graph_node(
     graph_file: Annotated[Path, typer.Argument(help="Generated graph.json artifact.")],

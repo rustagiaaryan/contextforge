@@ -173,6 +173,32 @@ def explain_node(graph: CodeGraph, query: str, *, limit: int = 30) -> dict[str, 
     }
 
 
+def rank_hubs(graph: CodeGraph, *, limit: int = 12) -> list[dict[str, Any]]:
+    """Return the most central graph nodes with transparent structural signals."""
+    if limit < 1 or limit > 100:
+        raise ValueError("Hub result limit must be between 1 and 100")
+    ranked = sorted(
+        graph.nodes,
+        key=lambda node_id: (
+            -float(graph.nodes[node_id].get("centrality", 0.0)),
+            -int(graph.degree(node_id)),
+            str(node_id),
+        ),
+    )
+    return [
+        {
+            "id": str(node_id),
+            "label": str(graph.nodes[node_id].get("label", node_id)),
+            "kind": str(graph.nodes[node_id].get("kind", "unknown")),
+            "centrality": float(graph.nodes[node_id].get("centrality", 0.0)),
+            "degree": int(graph.degree(node_id)),
+            "source_file": str(graph.nodes[node_id].get("source_file", "")),
+            "community": int(graph.nodes[node_id].get("community", -1)),
+        }
+        for node_id in ranked[:limit]
+    ]
+
+
 def resolve_node(graph: CodeGraph, query: str) -> str:
     """Resolve an exact or fuzzy node identifier, label, or qualified name."""
     normalized = query.strip().casefold()

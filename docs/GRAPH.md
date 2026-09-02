@@ -46,9 +46,13 @@ vector store; the separate `contextforge compile` pipeline still supports hybrid
 Trace and explain concepts directly:
 
 ```bash
+contextforge graph hubs ./repository/contextforge-out/graph.json --limit 10
 contextforge graph path ./repository/contextforge-out/graph.json Router RequestHandler
 contextforge graph explain ./repository/contextforge-out/graph.json Router
 ```
+
+`graph hubs` returns normalized dependency centrality alongside degree, source, node kind, and
+community. This makes the ranking inspectable and suitable for scripts or coding agents.
 
 ## Confidence
 

@@ -156,6 +156,22 @@ def test_cli_builds_and_queries_portable_graph(tmp_path: Path) -> None:
     assert queried.exit_code == 0, queried.output
     assert json.loads(queried.output)["nodes"]
 
+    hubs = runner.invoke(
+        app,
+        ["graph", "hubs", str(graph_file), "--limit", "3"],
+    )
+    assert hubs.exit_code == 0, hubs.output
+    ranked = json.loads(hubs.output)
+    assert len(ranked) == 3
+    assert ranked[0]["centrality"] == 1.0
+    assert [node["centrality"] for node in ranked] == sorted(
+        (node["centrality"] for node in ranked),
+        reverse=True,
+    )
+    assert {"id", "label", "kind", "centrality", "degree", "source_file", "community"} <= set(
+        ranked[0]
+    )
+
 
 def test_cli_installs_project_scoped_graph_skill(tmp_path: Path) -> None:
     repository = _repository(tmp_path)

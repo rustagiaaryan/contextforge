@@ -77,6 +77,10 @@ contextforge graph query repository/contextforge-out/graph.json \
 contextforge graph explain \
   repository/contextforge-out/graph.json UserService
 
+# List the most structurally central components
+contextforge graph hubs \
+  repository/contextforge-out/graph.json --limit 10
+
 # Find a static relationship path between two concepts
 contextforge graph path \
   repository/contextforge-out/graph.json LoginRoute UserRepository
