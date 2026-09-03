@@ -33,6 +33,7 @@ def test_mcp_registers_the_documented_tool_surface() -> None:
         "get_callees",
         "get_callers",
         "get_index_status",
+        "get_architectural_hubs",
         "get_symbol",
         "index_repository",
         "search_code",
@@ -84,6 +85,7 @@ async def _exercise_stdio_server(repository: Path) -> None:
     expected_calls: list[tuple[str, dict[str, object]]] = [
         ("index_repository", {"repository": str(repository)}),
         ("get_index_status", {"repository": str(repository)}),
+        ("get_architectural_hubs", {"repository": str(repository), "limit": 5}),
         (
             "search_symbols",
             {"repository": str(repository), "query": "Mount.resolve", "limit": 5},
@@ -181,3 +183,10 @@ async def _exercise_stdio_server(repository: Path) -> None:
             elif name in {"analyze_symbol_impact", "analyze_change_impact"}:
                 payload = json.loads(result.content[0].text)
                 assert {"risk_level", "seeds", "impacted"} <= payload.keys()
+            elif name == "get_architectural_hubs":
+                payload = [json.loads(content.text) for content in result.content]
+                assert len(payload) == 5
+                assert payload[0]["centrality"] >= payload[-1]["centrality"]
+                assert {"node_id", "label", "node_type", "path", "centrality", "degree"} <= set(
+                    payload[0]
+                )

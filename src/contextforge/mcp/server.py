@@ -52,6 +52,13 @@ def get_index_status(repository: str) -> dict[str, Any]:
 
 
 @mcp.tool()
+def get_architectural_hubs(repository: str, limit: int = 12) -> list[dict[str, object]]:
+    """Rank indexed source symbols by deterministic dependency centrality and graph degree."""
+    engine = _engine(repository)
+    return GraphQuery(engine.database).architectural_hubs(limit=min(100, max(1, limit)))
+
+
+@mcp.tool()
 def search_symbols(repository: str, query: str, limit: int = 20) -> list[dict[str, Any]]:
     """Find exact or fuzzy classes, functions, methods, and tests with ranked provenance."""
     results = _engine(repository).search_symbols(query, limit=min(100, max(1, limit)))

@@ -44,6 +44,38 @@ class GraphQuery:
                 scores[str(row["node_id"])] = float(value)
         return scores
 
+    def architectural_hubs(self, *, limit: int = 12) -> list[dict[str, object]]:
+        """Return source-backed graph nodes ranked by dependency centrality and degree."""
+        self._load_cache()
+        assert self._nodes is not None
+        assert self._incoming is not None and self._outgoing is not None
+        ranked: list[tuple[float, int, str, dict[str, object]]] = []
+        for node_id, node in self._nodes.items():
+            if node.unit_id is None:
+                continue
+            centrality = node.metadata.get("centrality", 0.0)
+            community = node.metadata.get("community", -1)
+            centrality_score = float(centrality) if isinstance(centrality, int | float) else 0.0
+            degree = len(self._incoming.get(node_id, ())) + len(self._outgoing.get(node_id, ()))
+            ranked.append(
+                (
+                    centrality_score,
+                    degree,
+                    node_id,
+                    {
+                        "node_id": node_id,
+                        "label": node.label,
+                        "node_type": node.node_type.value,
+                        "path": node.path,
+                        "centrality": centrality_score,
+                        "degree": degree,
+                        "community": int(community) if isinstance(community, int) else -1,
+                    },
+                )
+            )
+        ranked.sort(key=lambda item: (-item[0], -item[1], item[2]))
+        return [item[3] for item in ranked[: min(100, max(1, limit))]]
+
     def edges(self, node_id: str) -> tuple[tuple[GraphEdge, ...], tuple[GraphEdge, ...]]:
         """Return `(incoming, outgoing)` edges for a node."""
         self._load_cache()

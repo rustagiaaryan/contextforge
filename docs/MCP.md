@@ -8,6 +8,7 @@ ContextForge exposes the same persistent index and compiler used by the Python A
 | --- | --- |
 | `index_repository` | Incrementally index source, graph, embeddings, and Git history |
 | `get_index_status` | Inspect persistent counts and parse errors |
+| `get_architectural_hubs` | Rank indexed symbols by dependency centrality and graph degree |
 | `search_symbols` | Exact and fuzzy class/function/method/test search |
 | `search_code` | Hybrid BM25 and local-embedding search |
 | `get_symbol` | Fetch a full source unit and its incoming/outgoing edges |
@@ -21,6 +22,7 @@ ContextForge exposes the same persistent index and compiler used by the Python A
 
 Example agent requests:
 
+- “Use `get_architectural_hubs` to identify the repository's shared services and central APIs.”
 - “Before editing `app.utils.join_path`, use `analyze_symbol_impact` to show its callers, related
   tests, and strongest dependency paths.”
 - “Use `analyze_change_impact` to review my working tree and identify affected code that may need

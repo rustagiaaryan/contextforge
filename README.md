@@ -29,7 +29,7 @@ interactive HTML · JSON · Markdown · MCP tools
 - Answers graph queries, explains components, and traces paths between symbols
 - Compiles task-specific code, tests, and Git evidence under a requested token budget
 - Traces the likely blast radius of a symbol or current Git changes with explainable paths
-- Exposes 13 typed tools through a local MCP server
+- Exposes 14 typed tools through a local MCP server
 - Runs locally without an API key, model download, vector database, or external graph service
 
 ## Quick start
@@ -140,14 +140,14 @@ Example client configuration:
 The server exposes:
 
 ```text
-index_repository       get_index_status       search_symbols
-search_code            get_symbol             get_callers
-get_callees            find_related_tests     search_git_history
-expand_graph_neighbors compile_task_context
+index_repository       get_index_status       get_architectural_hubs
+search_symbols         search_code            get_symbol
+get_callers            get_callees            find_related_tests
+search_git_history     expand_graph_neighbors compile_task_context
 analyze_symbol_impact  analyze_change_impact
 ```
 
-Every tool accepts an explicit local repository path. The test suite launches the server as a subprocess, performs a real MCP handshake, discovers the schemas, and calls all 13 tools through stdio. See [docs/MCP.md](docs/MCP.md) for source-checkout configuration.
+Every tool accepts an explicit local repository path. The test suite launches the server as a subprocess, performs a real MCP handshake, discovers the schemas, and calls all 14 tools through stdio. See [docs/MCP.md](docs/MCP.md) for source-checkout configuration.
 
 ## How the graph is built
 
